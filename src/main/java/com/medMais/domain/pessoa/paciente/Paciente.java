@@ -4,9 +4,12 @@ import java.math.BigDecimal;
 
 import com.medMais.domain.pessoa.Pessoa;
 import com.medMais.domain.pessoa.paciente.dto.DataRegistroPaciente;
+import com.medMais.domain.pessoa.paciente.enums.TipoSanguineo;
 import com.medMais.domain.role.Role;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,6 +20,17 @@ public class Paciente extends Pessoa{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+    @Enumerated(EnumType.STRING)
+    private TipoSanguineo tipoSanguineo;  // O+, A-, B+, etc
+    
+    private String numeroCarteiraPlano;
+    
+    private String contatoEmergencia;
+    
+    private Double peso;  // Em kg
+
+    private Double altura;  // Em metros
 	    
     public Paciente(DataRegistroPaciente data, Role role) {
         super(data.dataRegistroPessoa().login(),
@@ -31,5 +45,53 @@ public class Paciente extends Pessoa{
           	  BigDecimal.valueOf(0.0)//saldo inicial
           	  );
     }
+    
+    //METODO IMC
+    public Double getIMC() {
+        if (peso != null && altura != null && altura > 0) {
+            return peso / (altura * altura);
+        }
+        return null;
+    }
+
+	public TipoSanguineo getTipoSanguineo() {
+		return tipoSanguineo;
+	}
+
+	public void setTipoSanguineo(TipoSanguineo tipoSanguineo) {
+		this.tipoSanguineo = tipoSanguineo;
+	}
+
+	public String getNumeroCarteiraPlano() {
+		return numeroCarteiraPlano;
+	}
+
+	public void setNumeroCarteiraPlano(String numeroCarteiraPlano) {
+		this.numeroCarteiraPlano = numeroCarteiraPlano;
+	}
+
+	public String getContatoEmergencia() {
+		return contatoEmergencia;
+	}
+
+	public void setContatoEmergencia(String contatoEmergencia) {
+		this.contatoEmergencia = contatoEmergencia;
+	}
+
+	public Double getPeso() {
+		return peso;
+	}
+
+	public void setPeso(Double peso) {
+		this.peso = peso;
+	}
+
+	public Double getAltura() {
+		return altura;
+	}
+
+	public void setAltura(Double altura) {
+		this.altura = altura;
+	}
 
 }

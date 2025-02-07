@@ -41,7 +41,8 @@ public class ConsultaController {
     }
     
     @GetMapping("/{status}")
-	public ResponseEntity<Page<DataDetalhesConsulta>> buscaPorStatus(@PathVariable StatusConsulta status,Authentication authentication,
+	public ResponseEntity<Page<DataDetalhesConsulta>> buscaPorStatus(@PathVariable StatusConsulta status,
+																				   Authentication authentication,
 			   														 @PageableDefault(size = 10,
 			   														 				  sort = {"id"}) Pageable pageable){
     	return consultaService.buscaConsultas(status, authentication.getName(), pageable);

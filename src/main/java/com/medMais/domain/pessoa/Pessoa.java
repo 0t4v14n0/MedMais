@@ -13,10 +13,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.medMais.domain.endereco.Endereco;
 import com.medMais.domain.endereco.dto.DataRegistroEndereco;
+import com.medMais.domain.pessoa.enums.Sexo;
 import com.medMais.domain.role.Role;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -46,6 +49,9 @@ public abstract class Pessoa implements UserDetails {
     private String email;
     private String telefone;
     private LocalDate dataNascimento;
+    
+    @Enumerated(EnumType.STRING)
+    private Sexo sexo;  // MASCULINO, FEMININO, OUTRO
     
     private String login;
     private String senha;
