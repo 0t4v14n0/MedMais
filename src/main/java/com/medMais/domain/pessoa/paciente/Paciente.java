@@ -1,9 +1,11 @@
 package com.medMais.domain.pessoa.paciente;
 
 import java.math.BigDecimal;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.medMais.domain.pessoa.Pessoa;
 import com.medMais.domain.pessoa.paciente.dto.DataRegistroPaciente;
+import com.medMais.domain.pessoa.paciente.enums.TipoPlano;
 import com.medMais.domain.pessoa.paciente.enums.TipoSanguineo;
 import com.medMais.domain.role.Role;
 
@@ -31,6 +33,9 @@ public class Paciente extends Pessoa{
     private Double peso;  // Em kg
 
     private Double altura;  // Em metros
+    
+    @Enumerated(EnumType.STRING)
+    private TipoPlano tipoPlano;
 	    
     public Paciente(DataRegistroPaciente data, Role role) {
         super(data.dataRegistroPessoa().login(),
@@ -44,6 +49,11 @@ public class Paciente extends Pessoa{
           	  data.dataRegistroPessoa().dataRegistroEndereco(),
           	  BigDecimal.valueOf(0.0)//saldo inicial
           	  );
+        this.numeroCarteiraPlano = super.getId()+"000"+ThreadLocalRandom.current().nextInt(100, 200);
+        this.contatoEmergencia = data.contatoEmergencia();
+        this.peso = data.peso();
+        this.altura = data.altura();
+        this.tipoPlano = TipoPlano.BASICO;
     }
     
     //METODO IMC

@@ -2,9 +2,10 @@ package com.medMais.domain.historicoDoenca;
 
 import java.time.LocalDate;
 
+import com.medMais.domain.historicoDoenca.dto.DataRegistroHistoricoDoenca;
 import com.medMais.domain.historicoDoenca.enums.EstadoDoenca;
 import com.medMais.domain.historicoDoenca.enums.Gravidade;
-import com.medMais.domain.pessoa.Pessoa;
+import com.medMais.domain.pessoa.paciente.Paciente;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,7 +27,7 @@ public class HistoricoDoenca {
 
     @OneToOne
     @JoinColumn(name = "pessoa_id", nullable = false)
-    private Pessoa pessoa;
+    private Paciente paciente;
 
     private String nomeDaDoenca;
 
@@ -47,6 +48,21 @@ public class HistoricoDoenca {
 
     @Enumerated(EnumType.STRING)
     private Gravidade gravidade;  // LEVE, MODERADA, GRAVE
+    
+    public HistoricoDoenca(){}
+    
+    public HistoricoDoenca(DataRegistroHistoricoDoenca data, Paciente paciente){
+    	this.paciente = paciente;
+    	this.nomeDaDoenca = data.nomeDoenca();
+    	this.descricao = data.descricao();
+    	this.dataDiagnostico = data.dataDiagnostico();
+    	this.dataRecuperacao = data.dataRecuperacao();
+    	this.estadoAtual = data.estadoAtual();
+    	this.tratamento = data.tratamento();
+    	this.medicamentos = data.medicamentos();
+    	this.observacoesMedicas = data.observacoesMedicas();
+    	this.gravidade = data.gravidade();
+    }
 
 	public Long getId() {
 		return id;
@@ -56,12 +72,12 @@ public class HistoricoDoenca {
 		this.id = id;
 	}
 
-	public Pessoa getPessoa() {
-		return pessoa;
+	public Paciente getPaciente() {
+		return paciente;
 	}
 
-	public void setPessoa(Pessoa pessoa) {
-		this.pessoa = pessoa;
+	public void setPaciente(Paciente paciente) {
+		this.paciente = paciente;
 	}
 
 	public String getNomeDaDoenca() {
