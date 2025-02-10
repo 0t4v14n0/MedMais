@@ -10,6 +10,7 @@ import com.medMais.domain.consulta.enums.StatusConsulta;
 import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.paciente.Paciente;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -26,11 +27,11 @@ public class Consulta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
     

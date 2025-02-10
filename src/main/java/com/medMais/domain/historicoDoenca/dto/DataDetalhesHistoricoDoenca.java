@@ -27,5 +27,4 @@ public record DataDetalhesHistoricoDoenca (String nomeDoenca,
 				historicoDoenca.getObservacoesMedicas(),
 				historicoDoenca.getGravidade());
 	}
-
 }

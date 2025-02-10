@@ -22,7 +22,7 @@ import com.medMais.domain.consulta.enums.StatusConsulta;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/consultas")
+@RequestMapping("/consulta")
 public class ConsultaController {
 	
     @Autowired
@@ -38,6 +38,12 @@ public class ConsultaController {
     public ResponseEntity<?> atualizarConsulta(@RequestBody @Valid DataAtualizarConsulta dataAtualizarConsulta,
 		       																		Authentication authentication) {
         return ResponseEntity.ok(consultaService.atualizarConsulta(dataAtualizarConsulta, authentication.getName()));        
+    }
+    
+    @PostMapping("/cancelar/{id}")
+    public ResponseEntity<?> cancelarConsulta(@PathVariable Long id,
+		       												Authentication authentication) {
+        return ResponseEntity.ok(consultaService.cancelarConsulta(id, authentication.getName()));        
     }
     
     @GetMapping("/{status}")

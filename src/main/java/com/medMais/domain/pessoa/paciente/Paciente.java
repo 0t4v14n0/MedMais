@@ -49,7 +49,8 @@ public class Paciente extends Pessoa{
           	  data.dataRegistroPessoa().dataRegistroEndereco(),
           	  BigDecimal.valueOf(0.0)//saldo inicial
           	  );
-        this.numeroCarteiraPlano = super.getId()+"000"+ThreadLocalRandom.current().nextInt(100, 200);
+        this.tipoSanguineo = data.tipoSanguineo();
+        this.numeroCarteiraPlano = super.getId()+"000"+ThreadLocalRandom.current().nextInt(100, 200);// padrao = 01000100
         this.contatoEmergencia = data.contatoEmergencia();
         this.peso = data.peso();
         this.altura = data.altura();
@@ -102,6 +103,14 @@ public class Paciente extends Pessoa{
 
 	public void setAltura(Double altura) {
 		this.altura = altura;
+	}
+
+	public TipoPlano getTipoPlano() {
+		return tipoPlano;
+	}
+
+	public void setTipoPlano(TipoPlano tipoPlano) {
+		this.tipoPlano = tipoPlano;
 	}
 
 }

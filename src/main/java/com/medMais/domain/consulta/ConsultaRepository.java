@@ -27,4 +27,13 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 	ResponseEntity<Page<DataDetalhesConsulta>> findByIdAndStatus(StatusConsulta status, String login,
 			Pageable pageable);
 
+	@Query("SELECT c FROM Consulta c " +
+       "JOIN c.paciente p " +
+       "JOIN c.medico m " +
+       "WHERE c.id = :idConsulta " +
+       "AND (p.nome = :nome OR m.nome = :nome)")
+	Optional<Consulta> findByIdAndNomePacienteOrMedico(@Param("idConsulta") Long idConsulta, 
+                                                   	   @Param("nome") String nome);
+
+
 }

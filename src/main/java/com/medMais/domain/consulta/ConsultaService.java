@@ -2,13 +2,17 @@ package com.medMais.domain.consulta;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.medMais.domain.consulta.dto.DataAtualizarConsulta;
 import com.medMais.domain.consulta.dto.DataDetalhesConsulta;
@@ -82,6 +86,39 @@ public class ConsultaService {
 		consultaRepository.save(consulta);
 		
 		return ResponseEntity.ok(new DataDetalhesConsulta(consulta));
+	}
+	
+	//Cancelar Consulta
+
+	public ResponseEntity<?> cancelarConsulta(@Valid Long id, String name) {
+		
+		Consulta consulta = consultaRepository.findByIdAndNomePacienteOrMedico(id, name).orElseThrow(() -> new IllegalArgumentException("Consulta não encontrada!"));
+		
+	    if (consulta.getStatusConsulta() == StatusConsulta.CANCELADA) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta já foi cancelada anteriormente.");
+	    }
+	    
+		consulta.setStatusConsulta(StatusConsulta.CANCELADA);
+			
+		Paciente paciente = consulta.getPaciente();		
+		Medico medico = consulta.getMedico();
+		
+		BigDecimal saldoPaciente = paciente.getSaldo();
+		BigDecimal valorConsulta = medico.getValorConsulta();
+		BigDecimal saldoMedico = medico.getSaldo();
+		
+		paciente.setSaldo(saldoPaciente.add(valorConsulta));
+		medico.setSaldo(saldoMedico.subtract(valorConsulta));
+
+		consultaRepository.save(consulta);
+		
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("mensagem", "Consulta cancelada com sucesso!");
+	    response.put("statusConsulta", consulta.getStatusConsulta());
+	    response.put("pacienteSaldoAtual", paciente.getSaldo());
+	    response.put("medicoSaldoAtual", medico.getSaldo());
+
+	    return ResponseEntity.ok(response);
 	}
 
 	public ResponseEntity<Page<DataDetalhesConsulta>> buscaConsultas(StatusConsulta status, String login,
