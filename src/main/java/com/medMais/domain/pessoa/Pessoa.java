@@ -211,4 +211,9 @@ public abstract class Pessoa implements UserDetails {
         return true;
     }
 
+	public String getVerificationCode() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

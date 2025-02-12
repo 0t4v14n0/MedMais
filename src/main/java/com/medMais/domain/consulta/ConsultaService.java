@@ -92,7 +92,8 @@ public class ConsultaService {
 
 	public ResponseEntity<?> cancelarConsulta(@Valid Long id, String name) {
 		
-		Consulta consulta = consultaRepository.findByIdAndNomePacienteOrMedico(id, name).orElseThrow(() -> new IllegalArgumentException("Consulta não encontrada!"));
+		Consulta consulta = consultaRepository.findByIdAndNomePacienteOrMedico(id, name)
+											  .orElseThrow(() -> new IllegalArgumentException("Consulta não encontrada!"));
 		
 	    if (consulta.getStatusConsulta() == StatusConsulta.CANCELADA) {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta já foi cancelada anteriormente.");
@@ -122,7 +123,7 @@ public class ConsultaService {
 	}
 
 	public ResponseEntity<Page<DataDetalhesConsulta>> buscaConsultas(StatusConsulta status, String login,
-																						   Pageable pageable) {
+																						    Pageable pageable) {
 		return consultaRepository.findByIdAndStatus(status,login,pageable);
 	}
 	
