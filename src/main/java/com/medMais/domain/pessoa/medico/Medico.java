@@ -28,7 +28,6 @@ public class Medico extends Pessoa {
             
     public Medico(DataRegistroMedico data, Role role) {
         super(data.dataRegistroPessoa().login(),
-        	  data.dataRegistroPessoa().senha(),
         	  role,
         	  data.dataRegistroPessoa().nome(),
         	  data.dataRegistroPessoa().cpf(), 

@@ -3,11 +3,14 @@ package com.medMais.domain.mail;
 import java.io.UnsupportedEncodingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.medMais.domain.pessoa.Pessoa;
+import com.medMais.domain.pessoa.PessoaRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -18,9 +21,13 @@ public class MailService {
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
+    @Autowired
+    private PessoaRepository pessoaRepository;
+	
 	private String verifyURL = "http://localhost/email/verify?code=";
 	
 	public void sendVerificacaoEmail(Pessoa pessoa) throws UnsupportedEncodingException, MessagingException{
+		
 		String toAddres = pessoa.getEmail();
 		String fromAddres = "medmaisconsultorio@gmail.com";
 		String senderName = "MedMais";
@@ -422,15 +429,30 @@ public class MailService {
         
         content = content.replace("[[NAME]]", pessoa.getNome());
 
-        String verifyURL = this.verifyURL + pessoa.getVerificationCode();
+        String verifyURL = this.verifyURL + pessoa.getTokenConfirmacao();
 
         content = content.replace("[[URL]]", verifyURL);
 
         helper.setText(content, true);
 
-        javaMailSender.send(message);
-        
-		
+        javaMailSender.send(message);	
 		
 	}
+
+    public ResponseEntity<String> confirmarEmail(String token) {
+    	
+        Pessoa pessoa = pessoaRepository.findByTokenConfirmacao(token);
+        
+        if (pessoa == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token inválido!");
+        }
+        
+        // confirma o email do usuario 
+        pessoa.setEmailConfirmado(true);
+        pessoa.setTokenConfirmacao(null);// 0 o token 
+        pessoaRepository.save(pessoa);
+
+        return ResponseEntity.ok("E-mail confirmado com sucesso!");
+    }
+
 }

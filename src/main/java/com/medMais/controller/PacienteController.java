@@ -26,7 +26,7 @@ public class PacienteController {
     @PostMapping("/register")
     public ResponseEntity<DataDetalhesPaciente> register(@RequestBody @Valid DataRegistroPaciente data,
 			UriComponentsBuilder uriBuilder ) {
-    	return pacienteService.registerUsuario(data, uriBuilder);		
+    	return pacienteService.registroPaciente(data, uriBuilder);		
     }
 
 }

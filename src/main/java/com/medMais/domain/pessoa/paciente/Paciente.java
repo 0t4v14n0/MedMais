@@ -39,7 +39,6 @@ public class Paciente extends Pessoa{
 	    
     public Paciente(DataRegistroPaciente data, Role role) {
         super(data.dataRegistroPessoa().login(),
-          	  data.dataRegistroPessoa().senha(),
           	  role,
           	  data.dataRegistroPessoa().nome(),
           	  data.dataRegistroPessoa().cpf(), 

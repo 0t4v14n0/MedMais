@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.medMais.domain.pessoa.PessoaRepository;
 import com.medMais.domain.pessoa.paciente.dto.DataDetalhesPaciente;
 import com.medMais.domain.pessoa.paciente.dto.DataRegistroPaciente;
 import com.medMais.domain.role.Role;
@@ -24,15 +25,29 @@ public class PacienteService {
     
     @Autowired
     private PacienteRepository pacienteRepository;
+    
+    @Autowired
+    private PessoaRepository pessoaRepository;
 
-	public ResponseEntity<DataDetalhesPaciente> registerUsuario(@Valid DataRegistroPaciente data,
+	public ResponseEntity<DataDetalhesPaciente> registroPaciente(@Valid DataRegistroPaciente data,
 																	   UriComponentsBuilder uriBuilder) {
+		//Validacoes de Login e Email
+		if(pessoaRepository.findByLogin(data.dataRegistroPessoa().login()) != null) {
+			throw new RuntimeException("Esse login ja foi cadastrado !");
+		}
+		if(pessoaRepository.findByEmail(data.dataRegistroPessoa().email()) != null) {
+			throw new RuntimeException("Esse email ja foi cadastrado !");
+		}
+		
 		Role role = roleService.findByNameRole("PACIENTE");
 		var pessoa = new Paciente(data, role);
 		pessoa.setSenha(passwordUtil.encrypt(data.dataRegistroPessoa().senha()));
-		pacienteRepository.save(pessoa);
-		var uri = uriBuilder.path("").buildAndExpand(pessoa.getId()).toUri();
 		
+		pessoa.gerarTokenConfirmacao();
+		
+	    pacienteRepository.save(pessoa);
+		
+		var uri = uriBuilder.path("").buildAndExpand(pessoa.getId()).toUri();		
 		return ResponseEntity.created(uri).body(new DataDetalhesPaciente(pessoa));
 	}
 

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -58,6 +59,9 @@ public abstract class Pessoa implements UserDetails {
     
     private BigDecimal saldo;
     
+    private boolean emailConfirmado = false;
+    private String tokenConfirmacao;
+    
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id", referencedColumnName = "id")
     private Endereco endereco;
@@ -70,12 +74,11 @@ public abstract class Pessoa implements UserDetails {
     )
     private Set<Role> roles;
     		    
-    public Pessoa(String login, String senha, Role roles,String nome, String cpf, String email,
+    public Pessoa(String login, Role roles,String nome, String cpf, String email,
     			  String telefone, LocalDate dataNascimento
     			  ,DataRegistroEndereco dataRegistroEndereco, BigDecimal saldo
     			  ) {
         this.login = login;
-        this.senha = senha; 
 		this.roles = new HashSet<>();
 	    this.roles.add(roles);
     	this.nome = nome;
@@ -85,6 +88,34 @@ public abstract class Pessoa implements UserDetails {
         this.dataNascimento = dataNascimento;
         this.endereco = new Endereco(dataRegistroEndereco, this);
         this.saldo = saldo;
+    }
+
+	public String getTokenConfirmacao() {
+		return tokenConfirmacao;
+	}
+
+	public void setTokenConfirmacao(String tokenConfirmacao) {
+		this.tokenConfirmacao = tokenConfirmacao;
+	}
+
+	public Sexo getSexo() {
+		return sexo;
+	}
+
+	public void setSexo(Sexo sexo) {
+		this.sexo = sexo;
+	}
+
+	public boolean isEmailConfirmado() {
+		return emailConfirmado;
+	}
+
+	public void setEmailConfirmado(boolean emailConfirmado) {
+		this.emailConfirmado = emailConfirmado;
+	}
+
+    public void gerarTokenConfirmacao() {
+        this.tokenConfirmacao = UUID.randomUUID().toString();
     }
 
 	public BigDecimal getSaldo() {
@@ -210,10 +241,5 @@ public abstract class Pessoa implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-	public String getVerificationCode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }
