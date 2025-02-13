@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import com.medMais.domain.historicoDoenca.dto.DataRegistroHistoricoDoenca;
 import com.medMais.domain.historicoDoenca.enums.EstadoDoenca;
 import com.medMais.domain.historicoDoenca.enums.Gravidade;
+import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.paciente.Paciente;
 
 import jakarta.persistence.Entity;
@@ -28,6 +29,10 @@ public class HistoricoDoenca {
     @OneToOne
     @JoinColumn(name = "pessoa_id", nullable = false)
     private Paciente paciente;
+    
+    @OneToOne
+    @JoinColumn(name = "pessoa_id", nullable = false)
+    private Medico medico;
 
     private String nomeDaDoenca;
 
@@ -51,8 +56,9 @@ public class HistoricoDoenca {
     
     public HistoricoDoenca(){}
     
-    public HistoricoDoenca(DataRegistroHistoricoDoenca data, Paciente paciente){
+    public HistoricoDoenca(DataRegistroHistoricoDoenca data, Paciente paciente, Medico medico){
     	this.paciente = paciente;
+    	this.medico = medico;
     	this.nomeDaDoenca = data.nomeDoenca();
     	this.descricao = data.descricao();
     	this.dataDiagnostico = data.dataDiagnostico();

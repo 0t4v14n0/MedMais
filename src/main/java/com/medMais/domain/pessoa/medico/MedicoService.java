@@ -63,4 +63,8 @@ public class MedicoService {
                 			   .orElseThrow(() -> new RuntimeException("Médico não encontrado."));
 	}
 
+	public Medico buscaMedicoLogin(String name) {
+		return medicoRepository.findByLogin(name);
+	}
+
 }

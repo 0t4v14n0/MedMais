@@ -122,8 +122,7 @@ public class ConsultaService {
 	    return ResponseEntity.ok(response);
 	}
 
-	public ResponseEntity<Page<DataDetalhesConsulta>> buscaConsultas(StatusConsulta status, String login,
-																						    Pageable pageable) {
+	public ResponseEntity<Page<DataDetalhesConsulta>> buscaConsultas(StatusConsulta status, String login, Pageable pageable) {
 		return consultaRepository.findByIdAndStatus(status,login,pageable);
 	}
 	

@@ -54,5 +54,9 @@ public class PacienteService {
 	public Paciente buscaPacienteLogin(String nome) {
 		return pacienteRepository.findByLogin(nome);
 	}
+	
+	public Paciente buscaPacienteId(Long id) {
+		return pacienteRepository.findById(id).orElseThrow();
+	}
 
 }
