@@ -47,8 +47,8 @@ public class Consulta {
 
     @UpdateTimestamp
     private LocalDateTime atualizadoEm;
-
-    public Consulta() {}
+    
+    private String observacoes;
 
 	public Long getId() {
 		return id;
@@ -82,6 +82,22 @@ public class Consulta {
 		this.valorConsulta = valorConsulta;
 	}
 
+	public StatusConsulta getStatusConsulta() {
+		return statusConsulta;
+	}
+
+	public void setStatusConsulta(StatusConsulta statusConsulta) {
+		this.statusConsulta = statusConsulta;
+	}
+
+	public LocalDateTime getData() {
+		return data;
+	}
+
+	public void setData(LocalDateTime data) {
+		this.data = data;
+	}
+
 	public LocalDateTime getCriadoEm() {
 		return criadoEm;
 	}
@@ -98,20 +114,12 @@ public class Consulta {
 		this.atualizadoEm = atualizadoEm;
 	}
 
-	public StatusConsulta getStatusConsulta() {
-		return statusConsulta;
+	public String getObservacoes() {
+		return observacoes;
 	}
 
-	public void setStatusConsulta(StatusConsulta statusConsulta) {
-		this.statusConsulta = statusConsulta;
-	}
-
-	public LocalDateTime getData() {
-		return data;
-	}
-
-	public void setData(LocalDateTime data) {
-		this.data = data;
+	public void setObservacoes(String observacoes) {
+		this.observacoes = observacoes;
 	}
  
 }

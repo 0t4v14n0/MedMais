@@ -17,8 +17,11 @@ import org.springframework.web.server.ResponseStatusException;
 import com.medMais.domain.consulta.dto.DataAtualizarConsulta;
 import com.medMais.domain.consulta.dto.DataDetalhesConsulta;
 import com.medMais.domain.consulta.dto.DataRegistroConsulta;
+import com.medMais.domain.consulta.dto.ObsMedicoDTO;
 import com.medMais.domain.consulta.enums.HorarioConsulta;
 import com.medMais.domain.consulta.enums.StatusConsulta;
+import com.medMais.domain.historicotransacoes.HistoricoTransacoes;
+import com.medMais.domain.historicotransacoes.enums.StatusTransacao;
 import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.medico.MedicoService;
 import com.medMais.domain.pessoa.paciente.Paciente;
@@ -57,6 +60,12 @@ public class ConsultaService {
 		    throw new IllegalArgumentException("Não tem saldo suficiente...");
 		}
 		
+		HistoricoTransacoes h = new HistoricoTransacoes();
+		h.setMedico(medico);
+		h.setPaciente(paciente);
+		h.setRemetente(paciente.getId());
+		h.setStatus(StatusTransacao.AGENDADO);
+		
 		paciente.setSaldo(saldoPaciente.subtract(valorConsulta));
 		medico.setSaldo(saldoMedico.add(valorConsulta));
 		
@@ -66,6 +75,9 @@ public class ConsultaService {
 		consulta.setMedico(medico);
 		consulta.setStatusConsulta(StatusConsulta.ABERTA);
 		consulta.setValorConsulta(medico.getValorConsulta());
+		consulta.setCriadoEm(LocalDateTime.now());
+		consulta.setAtualizadoEm(LocalDateTime.now());
+		consulta.setData(dataRegistroConsulta.horarioConsulta());
 		
 		consultaRepository.save(consulta);
 				
@@ -95,8 +107,8 @@ public class ConsultaService {
 		Consulta consulta = consultaRepository.findByIdAndNomePacienteOrMedico(id, name)
 											  .orElseThrow(() -> new IllegalArgumentException("Consulta não encontrada!"));
 		
-	    if (consulta.getStatusConsulta() == StatusConsulta.CANCELADA) {
-	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta já foi cancelada anteriormente.");
+	    if (consulta.getStatusConsulta() == StatusConsulta.CANCELADA || consulta.getStatusConsulta() == StatusConsulta.FECHADA) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta já foi cancelada ou fechada anteriormente.");
 	    }
 	    
 		consulta.setStatusConsulta(StatusConsulta.CANCELADA);
@@ -116,14 +128,56 @@ public class ConsultaService {
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("mensagem", "Consulta cancelada com sucesso!");
 	    response.put("statusConsulta", consulta.getStatusConsulta());
-	    response.put("pacienteSaldoAtual", paciente.getSaldo());
-	    response.put("medicoSaldoAtual", medico.getSaldo());
-
+	    
+	    //evitar mandar dados desnecessariossa
+	    if(paciente.getLogin() == name) {
+	    	response.put("pacienteSaldoAtual", paciente.getSaldo());
+	    }else if (medico.getLogin() == name) {
+	    	response.put("medicoSaldoAtual", medico.getSaldo());
+	    }
+	    
 	    return ResponseEntity.ok(response);
+	}
+	
+	public ResponseEntity<DataDetalhesConsulta> buscaConsultaId(Long id, String name) {
+		
+		Consulta consula = buscaConsultaID(id);
+		Medico medico = consula.getMedico();
+		
+		if(medico.getLogin() != name) {
+			throw new RuntimeException("Nao tem autorizacao !");
+		}
+		
+		return ResponseEntity.ok(new DataDetalhesConsulta(consula));
 	}
 
 	public ResponseEntity<Page<DataDetalhesConsulta>> buscaConsultas(StatusConsulta status, String login, Pageable pageable) {
 		return consultaRepository.findByIdAndStatus(status,login,pageable);
+	}
+	
+	public ResponseEntity<DataDetalhesConsulta> terminarConsulta(Long id, ObsMedicoDTO obs, String name) {
+		
+		Consulta consulta = buscaConsultaID(id);
+		
+		Medico medico = consulta.getMedico();
+		
+		if(medico.getLogin() != name) {// validacao para outro medico nao fechar de outro med
+			throw new RuntimeException("Nao tem autorizacao !");
+		}
+		
+		consulta.setStatusConsulta(StatusConsulta.FECHADA);
+		consulta.setAtualizadoEm(LocalDateTime.now());
+		consulta.setObservacoes(obs.obsPublica());
+		
+		return ResponseEntity.ok(new DataDetalhesConsulta(consulta));
+	}
+	
+	//metodos
+	
+	private Consulta buscaConsultaID(Long id) {
+		Consulta consulta = consultaRepository.findById(id)
+									   		  .orElseThrow(() -> new RuntimeException("Consulta nao encontrada !"));
+		return consulta;
 	}
 	
 	private void validacaoData(LocalDateTime date, Long id) {

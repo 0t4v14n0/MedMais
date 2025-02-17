@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.medMais.domain.pessoa.PessoaService;
+import com.medMais.domain.pessoa.medico.dto.DataAtualizarMedico;
 import com.medMais.domain.pessoa.medico.dto.DataDetalhesMedico;
 import com.medMais.domain.pessoa.medico.dto.DataRegistroMedico;
 import com.medMais.domain.role.Role;
@@ -44,12 +45,10 @@ public class MedicoService {
 		return ResponseEntity.created(uri).body(new DataDetalhesMedico(pessoa));
 	}
 	
-	public ResponseEntity<DataDetalhesMedico> atualizarMedico(@Valid DataRegistroMedico data,
+	public ResponseEntity<DataDetalhesMedico> atualizarMedico(@Valid DataAtualizarMedico data,
 																	 String login) {
-		Medico medico = (Medico)pessoaService.buscaPessoa(login);
-		
-		//medico
-		if (!utils.isNullOrEmptyString(data.crm())) medico.setCrm(data.crm());
+		Medico medico = (Medico) pessoaService.buscaPessoa(login);
+
 		if (!utils.isNullOrEmptyFloat(data.valorConsulta())) medico.setValorConsulta(data.valorConsulta());
 		if (!utils.isNullOrEmptyCategoria(data.especialidadeMedica())) medico.setEspecialidade(data.especialidadeMedica());	
 	

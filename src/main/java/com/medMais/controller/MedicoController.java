@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.medMais.domain.consulta.ConsultaService;
 import com.medMais.domain.consulta.dto.DataDetalhesConsulta;
+import com.medMais.domain.consulta.dto.ObsMedicoDTO;
 import com.medMais.domain.consulta.enums.StatusConsulta;
 import com.medMais.domain.pessoa.medico.MedicoService;
-import com.medMais.domain.pessoa.medico.dto.DataRegistroMedico;
+import com.medMais.domain.pessoa.medico.dto.DataAtualizarMedico;
 
 import jakarta.validation.Valid;
 
@@ -34,13 +35,26 @@ public class MedicoController {
 	
 	@Transactional
     @PostMapping("/atualizar")
-    public ResponseEntity<?> atualizar(@RequestBody @Valid DataRegistroMedico data,
+    public ResponseEntity<?> atualizar(@RequestBody @Valid DataAtualizarMedico data,
 													       Authentication authentication){
 		return medicoService.atualizarMedico(data, authentication.getName());
 	}
 	
+	@Transactional
+    @PostMapping("/consulta/finalizar/{id}")
+    public ResponseEntity<?> terminarConsulta(@PathVariable Long id,
+    									@RequestBody @Valid ObsMedicoDTO obs,
+    														Authentication authentication){
+		return consultaService.terminarConsulta(id, obs, authentication.getName());
+	}
+	
+    @GetMapping("/consulta/{id}")
+	public ResponseEntity<?> buscaConsulta(@PathVariable Long id,Authentication authentication){
+    	return consultaService.buscaConsultaId(id,authentication.getName());
+    }
+	
 	//Busca todas as Consultas por Staus "ABERTA, FECHADA, CANCELADA"
-    @GetMapping("/{status}")
+    @GetMapping("/consulta/{status}")
 	public ResponseEntity<Page<DataDetalhesConsulta>> buscaPorStatus(@PathVariable StatusConsulta status,Authentication authentication,
 			   														 @PageableDefault(size = 10,
 			   														 				  sort = {"id"}) Pageable pageable){

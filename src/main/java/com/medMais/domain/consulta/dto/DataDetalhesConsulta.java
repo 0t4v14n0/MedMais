@@ -13,7 +13,8 @@ public record DataDetalhesConsulta(Long id,
 								   DataDetalhesMedico dataDetalhesMedico,
 								   BigDecimal valorConsulta,
 								   StatusConsulta statusConsula,
-								   LocalDateTime data) {
+								   LocalDateTime data,
+								   String obs) {
 	
 	public DataDetalhesConsulta(Consulta consulta){
 		this(consulta.getId(),
@@ -21,6 +22,7 @@ public record DataDetalhesConsulta(Long id,
 			 new DataDetalhesMedico(consulta.getMedico()),
 			 consulta.getValorConsulta(),
 			 consulta.getStatusConsulta(),
-			 consulta.getData());
+			 consulta.getData(),
+			 consulta.getObservacoes());
 	}
 }

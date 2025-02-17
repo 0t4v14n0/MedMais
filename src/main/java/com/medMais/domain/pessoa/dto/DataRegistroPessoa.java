@@ -28,6 +28,4 @@ public record DataRegistroPessoa(@NotNull
 		  						 @NotNull
 		  						 @NotBlank
 								 LocalDate dataNascimento,
-		  						 @NotNull
-		  						 @NotBlank
 								 DataRegistroEndereco dataRegistroEndereco) {}
