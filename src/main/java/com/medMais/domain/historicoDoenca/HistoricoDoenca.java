@@ -31,7 +31,7 @@ public class HistoricoDoenca {
     private Paciente paciente;
     
     @OneToOne
-    @JoinColumn(name = "pessoa_id", nullable = false)
+    @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
 
     private String nomeDaDoenca;

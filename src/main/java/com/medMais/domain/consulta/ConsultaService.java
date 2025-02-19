@@ -152,7 +152,11 @@ public class ConsultaService {
 	}
 
 	public ResponseEntity<Page<DataDetalhesConsulta>> buscaConsultas(StatusConsulta status, String login, Pageable pageable) {
-		return consultaRepository.findByIdAndStatus(status,login,pageable);
+	    Page<Consulta> consultas = consultaRepository.findByStatusAndMedicoLogin(status, login, pageable);
+	    
+	    Page<DataDetalhesConsulta> dtoPage = consultas.map(DataDetalhesConsulta::new);
+
+	    return ResponseEntity.ok(dtoPage);
 	}
 	
 	public ResponseEntity<DataDetalhesConsulta> terminarConsulta(Long id, ObsMedicoDTO obs, String name) {
