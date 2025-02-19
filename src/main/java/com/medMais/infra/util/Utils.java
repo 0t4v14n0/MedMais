@@ -49,6 +49,10 @@ public class Utils {
         return d == null;
     }
     
+    public boolean isNullOrEmptyDouble(Double d) {
+    	return d == null || d <= 0.0;
+    }
+    
     // DIA UIL E FERIADOS
     
     public static boolean eDiaUtil(LocalDateTime data) {

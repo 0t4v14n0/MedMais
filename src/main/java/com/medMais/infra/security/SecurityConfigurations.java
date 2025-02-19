@@ -23,9 +23,11 @@ public class SecurityConfigurations {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
                 	req.requestMatchers("/admin", "/admin/**").hasAnyAuthority("ADMIN");
-                    req.requestMatchers("usuario/login", "usuario/register").permitAll();
-                    req.requestMatchers("medico/login", "medico/register").permitAll();
-                    req.requestMatchers("/medico", "/medico/**").hasAnyAuthority("ADMIN");
+                    req.requestMatchers("/paciente/register").permitAll();
+                    req.requestMatchers("/pessoa/login").permitAll();
+                    req.requestMatchers("/auth/**").permitAll();
+                    req.requestMatchers("/medico/**").hasAnyAuthority("MEDICO");
+                    req.requestMatchers("/pessoa/atualizar","/endereco/**","/historicodoenca/**","/consulta/**").hasAnyAuthority("ADMIN","PACIENTE","MEDICO");
                     req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
                     req.anyRequest().authenticated();
                 })

@@ -42,4 +42,11 @@ public class EnderecoService {
 		return ResponseEntity.ok(new DataDetalhesEndereco(endereco));
 	}
 
+	public ResponseEntity<DataDetalhesEndereco> getEndereco(String name) {
+		
+		Pessoa p = pessoaService.buscaPessoa(name);
+		
+		return ResponseEntity.ok(new DataDetalhesEndereco(p.getEndereco()));
+	}
+
 }

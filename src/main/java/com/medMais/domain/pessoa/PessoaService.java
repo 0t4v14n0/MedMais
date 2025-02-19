@@ -6,9 +6,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import com.medMais.domain.pessoa.dto.DataAtualizarPessoa;
 import com.medMais.domain.pessoa.dto.DataAutentication;
 import com.medMais.domain.pessoa.dto.DataDetalhesPessoa;
-import com.medMais.domain.pessoa.dto.DataRegistroPessoa;
 import com.medMais.infra.security.TokenDataJWT;
 import com.medMais.infra.security.TokenService;
 import com.medMais.infra.util.Utils;
@@ -44,7 +44,7 @@ public class PessoaService {
         return ResponseEntity.ok(new TokenDataJWT(tokenJWT)); 
 	}
 	
-	public ResponseEntity<DataDetalhesPessoa> atualizarPessoa(@Valid DataRegistroPessoa data,
+	public ResponseEntity<DataDetalhesPessoa> atualizarPessoa(@Valid DataAtualizarPessoa data,
 			 														 String login) {
 		Pessoa pessoa = buscaPessoa(login);
 
