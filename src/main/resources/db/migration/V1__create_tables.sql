@@ -95,3 +95,7 @@ CREATE TABLE historico_doenca (
     CONSTRAINT fk_doenca_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id),
     CONSTRAINT fk_doenca_medico FOREIGN KEY (medico_id) REFERENCES medicos(id)
 );
+
+-- Valores iniciais Roles
+
+INSERT INTO roles (role_name) VALUES ('ADMIN'), ('MEDICO'), ('PACIENTE');

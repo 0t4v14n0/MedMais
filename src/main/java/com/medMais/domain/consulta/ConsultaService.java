@@ -21,6 +21,7 @@ import com.medMais.domain.consulta.dto.ObsMedicoDTO;
 import com.medMais.domain.consulta.enums.HorarioConsulta;
 import com.medMais.domain.consulta.enums.StatusConsulta;
 import com.medMais.domain.historicotransacoes.HistoricoTransacoes;
+import com.medMais.domain.historicotransacoes.HistoricoTransacoesRepository;
 import com.medMais.domain.historicotransacoes.enums.StatusTransacao;
 import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.medico.MedicoService;
@@ -40,6 +41,9 @@ public class ConsultaService {
 	
 	@Autowired
 	private ConsultaRepository consultaRepository;
+	
+	@Autowired
+	private HistoricoTransacoesRepository historicoTransacoesRepository;
 	
 	//Agendar Consulta
 	
@@ -79,8 +83,9 @@ public class ConsultaService {
 		consulta.setAtualizadoEm(LocalDateTime.now());
 		consulta.setData(dataRegistroConsulta.horarioConsulta());
 		
+		historicoTransacoesRepository.save(h);
 		consultaRepository.save(consulta);
-				
+						
 		return ResponseEntity.ok(new DataDetalhesConsulta(consulta));
 	}
 	
