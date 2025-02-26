@@ -1,10 +1,13 @@
 package com.medMais.domain.pessoa.paciente;
 
+import java.io.UnsupportedEncodingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.medMais.domain.mail.MailService;
 import com.medMais.domain.pessoa.PessoaRepository;
 import com.medMais.domain.pessoa.paciente.dto.DataAtualizarPaciente;
 import com.medMais.domain.pessoa.paciente.dto.DataDetalhesPaciente;
@@ -14,6 +17,7 @@ import com.medMais.domain.role.RoleService;
 import com.medMais.infra.util.PasswordUtil;
 import com.medMais.infra.util.Utils;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @Service
@@ -30,6 +34,9 @@ public class PacienteService {
     
     @Autowired
     private PessoaRepository pessoaRepository;
+    
+    @Autowired
+    private MailService mailService;
     
     @Autowired
     private Utils utils;
@@ -49,6 +56,12 @@ public class PacienteService {
 		pessoa.setSenha(passwordUtil.encrypt(data.dataRegistroPessoa().senha()));
 		
 		pessoa.gerarTokenConfirmacao();
+		
+		try {
+			mailService.sendVerificacaoEmail(pessoa);
+		} catch (UnsupportedEncodingException | MessagingException e) {
+			e.printStackTrace();
+		}
 		
 	    pacienteRepository.save(pessoa);
 		

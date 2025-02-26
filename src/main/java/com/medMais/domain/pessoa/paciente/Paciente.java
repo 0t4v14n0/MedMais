@@ -36,6 +36,8 @@ public class Paciente extends Pessoa{
     
     @Enumerated(EnumType.STRING)
     private TipoPlano tipoPlano;
+    
+    public Paciente() {}
 	    
     public Paciente(DataRegistroPaciente data, Role role) {
         super(data.dataRegistroPessoa().login(),

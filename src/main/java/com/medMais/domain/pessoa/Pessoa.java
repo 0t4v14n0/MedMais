@@ -73,6 +73,8 @@ public abstract class Pessoa implements UserDetails {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+    
+    public Pessoa() {}
     		    
     public Pessoa(String login, Role roles,String nome, String cpf, String email,
     			  String telefone, LocalDate dataNascimento

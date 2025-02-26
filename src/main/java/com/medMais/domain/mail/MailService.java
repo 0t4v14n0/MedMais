@@ -3,6 +3,7 @@ package com.medMais.domain.mail;
 import java.io.UnsupportedEncodingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,7 +25,8 @@ public class MailService {
     @Autowired
     private PessoaRepository pessoaRepository;
 	
-	private String verifyURL = "http://localhost/email/verify?code=";
+    @Value("${app.verify.url}")
+    private String verifyURL;
 	
 	public void sendVerificacaoEmail(Pessoa pessoa) throws UnsupportedEncodingException, MessagingException{
 		
