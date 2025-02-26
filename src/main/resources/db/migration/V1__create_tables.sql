@@ -1,6 +1,4 @@
--- V1__create_tables.sql
-
--- Tabela Endereco
+-- Tabela Endereco (sem chave estrangeira para pessoa inicialmente)
 CREATE TABLE endereco (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     endereco VARCHAR(255),
@@ -11,7 +9,7 @@ CREATE TABLE endereco (
     referencia VARCHAR(255)
 );
 
--- Tabela Pessoa (classe abstrata com Inheritance JOINED)
+-- Tabela Pessoa (sem a foreign key inicialmente)
 CREATE TABLE pessoa (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(255) NOT NULL,
@@ -25,17 +23,23 @@ CREATE TABLE pessoa (
     saldo DECIMAL(19,2) DEFAULT 0.00,
     email_confirmado BOOLEAN DEFAULT FALSE,
     token_confirmacao VARCHAR(255),
-    endereco_id BIGINT,
-    CONSTRAINT fk_endereco FOREIGN KEY (endereco_id) REFERENCES endereco(id)
+    endereco_id BIGINT
 );
 
--- Tabela Role
+-- Agora adicionamos as foreign keys para resolver o ciclo
+ALTER TABLE pessoa
+ADD CONSTRAINT fk_endereco FOREIGN KEY (endereco_id) REFERENCES endereco(id);
+
+ALTER TABLE endereco
+ADD COLUMN pessoa_id BIGINT,
+ADD CONSTRAINT fk_endereco_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id);
+
+-- Demais tabelas (sem alterações, pois não geram ciclos)
 CREATE TABLE roles (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     role_name VARCHAR(50) NOT NULL UNIQUE
 );
 
--- Tabela de relacionamento Pessoa x Role
 CREATE TABLE usuario_roles (
     usuario_id BIGINT NOT NULL,
     role_id BIGINT NOT NULL,
@@ -44,7 +48,6 @@ CREATE TABLE usuario_roles (
     CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
--- Tabela Medico (extends Pessoa)
 CREATE TABLE medicos (
     id BIGINT PRIMARY KEY,
     crm VARCHAR(50) NOT NULL,
@@ -53,7 +56,6 @@ CREATE TABLE medicos (
     CONSTRAINT fk_medico_pessoa FOREIGN KEY (id) REFERENCES pessoa(id)
 );
 
--- Tabela Paciente (extends Pessoa)
 CREATE TABLE paciente (
     id BIGINT PRIMARY KEY,
     tipo_sanguineo VARCHAR(10),
@@ -65,7 +67,6 @@ CREATE TABLE paciente (
     CONSTRAINT fk_paciente_pessoa FOREIGN KEY (id) REFERENCES pessoa(id)
 );
 
--- Tabela HistoricoTransacoes
 CREATE TABLE historico_transacoes (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     paciente_id BIGINT NOT NULL,
@@ -78,7 +79,6 @@ CREATE TABLE historico_transacoes (
     CONSTRAINT fk_transacao_medico FOREIGN KEY (medico_id) REFERENCES medicos(id)
 );
 
--- Tabela HistoricoDoenca
 CREATE TABLE historico_doenca (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     paciente_id BIGINT NOT NULL,
@@ -97,5 +97,4 @@ CREATE TABLE historico_doenca (
 );
 
 -- Valores iniciais Roles
-
 INSERT INTO roles (role_name) VALUES ('ADMIN'), ('MEDICO'), ('PACIENTE');

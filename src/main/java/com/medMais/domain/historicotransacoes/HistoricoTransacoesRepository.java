@@ -12,7 +12,7 @@ public interface HistoricoTransacoesRepository extends JpaRepository<HistoricoTr
 
 	@Query("SELECT h FROM HistoricoTransacoes h " +
 		       "WHERE h.status = :status " +
-		       "AND (h.medico.name = :name OR h.paciente.name = :name)")
+		       "AND (h.medico.login = :name OR h.paciente.login = :name)")
 		Page<HistoricoTransacoes> findByStatusForMedicoOrPaciente(@Param("status") StatusTransacao status,
 		                                                          @Param("name") String name,
 		                                                          Pageable pageable);

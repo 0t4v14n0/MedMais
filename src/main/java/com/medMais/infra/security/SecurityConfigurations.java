@@ -32,7 +32,7 @@ public class SecurityConfigurations {
                     req.requestMatchers("/auth/**").permitAll();
                     req.requestMatchers("/medico/**").hasAnyAuthority("MEDICO");
                     req.requestMatchers("/pessoa/atualizar","/endereco/**","/historicodoenca/**","/consulta/**").hasAnyAuthority("ADMIN","PACIENTE","MEDICO");
-                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
+                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**","/historicotransacoes/**").permitAll();
                     req.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

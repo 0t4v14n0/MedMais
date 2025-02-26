@@ -8,7 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Endereco {
@@ -17,8 +17,8 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-    @OneToOne
-    @JoinColumn(name = "pessoa_id", nullable = false)
+	@ManyToOne
+    @JoinColumn(name = "pessoa_id")
     private Pessoa pessoa;
     
 	private String endereco;
