@@ -1,5 +1,8 @@
 package com.medMais.domain.pessoa;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.medMais.domain.pessoa.dto.DataAtualizarPessoa;
 import com.medMais.domain.pessoa.dto.DataAutentication;
 import com.medMais.domain.pessoa.dto.DataDetalhesPessoa;
+import com.medMais.domain.role.Role;
 import com.medMais.infra.security.TokenDataJWT;
 import com.medMais.infra.security.TokenService;
 import com.medMais.infra.util.Utils;
@@ -41,7 +45,12 @@ public class PessoaService {
 		}
 		
 		var tokenJWT = tokenService.gerarToken((Pessoa) authentication.getPrincipal());  
-        return ResponseEntity.ok(new TokenDataJWT(tokenJWT)); 
+		
+		List<String> roles = pessoa.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toList());
+		
+        return ResponseEntity.ok(new TokenDataJWT(tokenJWT,roles)); 
 	}
 	
 	public ResponseEntity<DataDetalhesPessoa> atualizarPessoa(@Valid DataAtualizarPessoa data,

@@ -1,4 +1,7 @@
 package com.medMais.infra.security;
 
-public record TokenDataJWT(String Token) {}
+import java.util.List;
+
+public record TokenDataJWT(String Token,
+						   List<String> roles) {}
 

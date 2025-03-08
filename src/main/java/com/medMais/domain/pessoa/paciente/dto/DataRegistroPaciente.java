@@ -12,7 +12,7 @@ public record DataRegistroPaciente(@NotNull(message = "O tipo sanguíneo não po
 							       @NotNull
 			 					   @NotBlank
 			 					   String contatoEmergencia,
-			 					  @NotNull(message = "O peso não pode ser nula")
+			 					   @NotNull(message = "O peso não pode ser nula")
 								   @Positive(message = "O peso deve ser um valor positivo")
 								   Double peso,
 								   @NotNull(message = "A altura não pode ser nula")
