@@ -1,5 +1,6 @@
 package com.medMais.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/admin")
 public class AdminController {
 	
+	@Autowired
 	private MedicoService medicoService;
 	
 	@Transactional

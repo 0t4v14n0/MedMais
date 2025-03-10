@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.medMais.domain.mail.MailService;
-import com.medMais.domain.pessoa.PessoaRepository;
 import com.medMais.domain.pessoa.paciente.dto.DataAtualizarPaciente;
 import com.medMais.domain.pessoa.paciente.dto.DataDetalhesPaciente;
 import com.medMais.domain.pessoa.paciente.dto.DataRegistroPaciente;
@@ -33,9 +32,6 @@ public class PacienteService {
     private PacienteRepository pacienteRepository;
     
     @Autowired
-    private PessoaRepository pessoaRepository;
-    
-    @Autowired
     private MailService mailService;
     
     @Autowired
@@ -43,15 +39,12 @@ public class PacienteService {
 
 	public ResponseEntity<DataDetalhesPaciente> registroPaciente(@Valid DataRegistroPaciente data,
 																	   UriComponentsBuilder uriBuilder) {
-		//Validacoes de Login e Email
-		if(pessoaRepository.findByLogin(data.dataRegistroPessoa().login()) != null) {
-			throw new RuntimeException("Esse login ja foi cadastrado !");
-		}
-		if(pessoaRepository.findByEmail(data.dataRegistroPessoa().email()) != null) {
-			throw new RuntimeException("Esse email ja foi cadastrado !");
-		}
+		utils.validacoesCadastro(data.dataRegistroPessoa().login(),
+								 data.dataRegistroPessoa().email(),
+								 data.dataRegistroPessoa().cpf(),
+								 null);//paciente nao tem crm
 		
-		Role role = roleService.findByNameRole("PACIENTE");
+		Role role = roleService.findByNameRole("ADMIN");
 		var pessoa = new Paciente(data, role);
 		pessoa.setSenha(passwordUtil.encrypt(data.dataRegistroPessoa().senha()));
 		

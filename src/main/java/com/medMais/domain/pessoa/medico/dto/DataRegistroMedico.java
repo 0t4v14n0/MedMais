@@ -12,9 +12,6 @@ public record DataRegistroMedico(DataRegistroPessoa dataRegistroPessoa,
 		 						 @NotNull
 			 					 @NotBlank
 							     String crm,
-							     @NotNull
-			 					 @NotBlank
 							     BigDecimal valorConsulta,
 							     @NotNull
-			 					 @NotBlank
 							     EspecialidadeMedica especialidadeMedica) {}

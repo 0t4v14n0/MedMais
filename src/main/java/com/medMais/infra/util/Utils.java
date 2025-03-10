@@ -7,12 +7,21 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.medMais.domain.pessoa.PessoaRepository;
 import com.medMais.domain.pessoa.medico.EspecialidadeMedica;
+import com.medMais.domain.pessoa.medico.MedicoRepository;
 
 @Component
 public class Utils {
+	
+	@Autowired
+    private PessoaRepository pessoaRepository;
+	
+	@Autowired
+    private MedicoRepository medicoRepository;
 	
 	private static final Set<LocalDate> FERIADOS = new HashSet<>();
 
@@ -68,5 +77,28 @@ public class Utils {
     public static boolean eDataValida(LocalDateTime data) {
         return eDiaUtil(data) && !eFeriado(data.toLocalDate());
     }
+    
+    public void validacoesCadastro(String login,String email, String cpf, String crm) {
+    	
+		if(pessoaRepository.findByLogin(login) != null) {
+			throw new RuntimeException("Esse login ja foi cadastrado !");
+		}
+		
+		if(pessoaRepository.findByEmail(email) != null) {
+			throw new RuntimeException("Esse email ja foi cadastrado !");
+		}
+		
+		if(pessoaRepository.findByCpf(cpf) != null) {
+			throw new RuntimeException("Esse cpf ja foi cadastrado !");
+		}
+		
+		if(crm != null) {
+			if(medicoRepository.findByCrm(crm) != null) {
+				throw new RuntimeException("Esse crm ja foi cadastrado !");
+			}
+		}
+		
+    }
 
 }
+

@@ -19,6 +19,7 @@ import com.medMais.domain.consulta.ConsultaService;
 import com.medMais.domain.consulta.dto.DataDetalhesConsulta;
 import com.medMais.domain.consulta.dto.ObsMedicoDTO;
 import com.medMais.domain.consulta.enums.StatusConsulta;
+import com.medMais.domain.pessoa.medico.EspecialidadeMedica;
 import com.medMais.domain.pessoa.medico.MedicoService;
 import com.medMais.domain.pessoa.medico.dto.DataAtualizarMedico;
 
@@ -39,6 +40,21 @@ public class MedicoController {
     public ResponseEntity<?> atualizar(@RequestBody @Valid DataAtualizarMedico data,
 													       Authentication authentication){
 		return medicoService.atualizarMedico(data, authentication.getName());
+	}
+	
+	@GetMapping("/all")
+	public ResponseEntity<?> getMedicos(Pageable pageable) {
+	    return ResponseEntity.ok(medicoService.findAll(pageable));
+	}
+	
+	@GetMapping("/all/{especialidade}")
+	public ResponseEntity<?> getMedicosByEspecialidade(@PathVariable EspecialidadeMedica especialidade,Pageable pageable) {
+	    return ResponseEntity.ok(medicoService.getMedicosByEspecialidade(especialidade,pageable));
+	}
+	
+	@GetMapping("/especialidade")
+	public ResponseEntity<?> getAllEspecialidade() {
+	    return ResponseEntity.ok(medicoService.getAllEspecialidadesDisponiveis());
 	}
 	
 	@Transactional

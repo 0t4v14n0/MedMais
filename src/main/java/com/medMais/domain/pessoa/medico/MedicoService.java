@@ -1,10 +1,16 @@
 package com.medMais.domain.pessoa.medico;
 
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.medMais.domain.mail.MailService;
 import com.medMais.domain.pessoa.PessoaService;
 import com.medMais.domain.pessoa.medico.dto.DataAtualizarMedico;
 import com.medMais.domain.pessoa.medico.dto.DataDetalhesMedico;
@@ -14,6 +20,7 @@ import com.medMais.domain.role.RoleService;
 import com.medMais.infra.util.PasswordUtil;
 import com.medMais.infra.util.Utils;
 
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 
 @Service
@@ -33,14 +40,29 @@ public class MedicoService {
     
     @Autowired
     private Utils utils;
+    
+    @Autowired
+    private MailService mailService;
 
 	public ResponseEntity<DataDetalhesMedico> registerMedico(@Valid DataRegistroMedico data,
 			   												  UriComponentsBuilder uriBuilder) {
+		
+		utils.validacoesCadastro(data.dataRegistroPessoa().login(),
+								 data.dataRegistroPessoa().email(),
+								 data.dataRegistroPessoa().cpf(),
+								 data.crm());
+
 		Role role = roleService.findByNameRole("MEDICO");
 		var pessoa = new Medico(data, role);
 		pessoa.setSenha(passwordUtil.encrypt(data.dataRegistroPessoa().senha()));
 		medicoRepository.save(pessoa);
 		var uri = uriBuilder.path("").buildAndExpand(pessoa.getId()).toUri();
+		
+		try {
+			mailService.sendVerificacaoEmail(pessoa);
+		} catch (UnsupportedEncodingException | MessagingException e) {
+			e.printStackTrace();
+		}
 		
 		return ResponseEntity.created(uri).body(new DataDetalhesMedico(pessoa));
 	}
@@ -64,6 +86,30 @@ public class MedicoService {
 
 	public Medico buscaMedicoLogin(String name) {
 		return medicoRepository.findByLogin(name);
+	}
+
+	public ResponseEntity<Page<DataDetalhesMedico>> findAll(Pageable pageable) {
+		
+	    Page<Medico> medicos = medicoRepository.findAll(pageable);
+	    
+        Page<DataDetalhesMedico> detalhesMedicos = medicos.map(DataDetalhesMedico::new);
+
+        return ResponseEntity.ok(detalhesMedicos);
+	}
+
+	public ResponseEntity<Page<DataDetalhesMedico>> getMedicosByEspecialidade(EspecialidadeMedica especialidade,
+																			  Pageable pageable) {
+		
+		Page<Medico> medicos = medicoRepository.findAllByEspecialidade(especialidade,pageable);
+		
+		Page<DataDetalhesMedico> detalhesMedicos = medicos.map(DataDetalhesMedico::new);
+
+        return ResponseEntity.ok(detalhesMedicos);
+	}
+
+	public ResponseEntity<List<EspecialidadeMedica>> getAllEspecialidadesDisponiveis() {
+        List<EspecialidadeMedica> especialidades = medicoRepository.findDistinctEspecialidades();
+        return ResponseEntity.ok(especialidades);
 	}
 
 }
