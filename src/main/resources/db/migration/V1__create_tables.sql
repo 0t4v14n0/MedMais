@@ -34,7 +34,6 @@ ALTER TABLE endereco
 ADD COLUMN pessoa_id BIGINT,
 ADD CONSTRAINT fk_endereco_pessoa FOREIGN KEY (pessoa_id) REFERENCES pessoa(id);
 
--- Demais tabelas (sem alterações, pois não geram ciclos)
 CREATE TABLE roles (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     role_name VARCHAR(50) NOT NULL UNIQUE
@@ -94,6 +93,50 @@ CREATE TABLE historico_doenca (
     gravidade VARCHAR(50),
     CONSTRAINT fk_doenca_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id),
     CONSTRAINT fk_doenca_medico FOREIGN KEY (medico_id) REFERENCES medicos(id)
+);
+
+-- Tabela Plano
+CREATE TABLE planos (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    tipo_plano VARCHAR(50) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    desconto DECIMAL(10,2) NOT NULL,
+    taxas_adicionais DECIMAL(10,2) NOT NULL,
+    duracao INT,
+    data_inicio DATE,
+    data_termino DATE,
+    status VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE plano_beneficios (
+    plano_id BIGINT NOT NULL,
+    beneficio VARCHAR(255),
+    FOREIGN KEY (plano_id) REFERENCES planos(id)
+);
+
+CREATE TABLE plano_limitacoes (
+    plano_id BIGINT NOT NULL,
+    limitacao VARCHAR(255),
+    FOREIGN KEY (plano_id) REFERENCES planos(id)
+);
+
+CREATE TABLE plano_metodos_pagamento (
+    plano_id BIGINT NOT NULL,
+    metodo_pagamento VARCHAR(255),
+    FOREIGN KEY (plano_id) REFERENCES planos(id)
+);
+
+-- Tabela Assinatura
+CREATE TABLE assinatura (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    usuario_id BIGINT NOT NULL,
+    plano_id BIGINT NOT NULL,
+    data_inicio DATE NOT NULL,
+    data_expiracao DATE NOT NULL,
+    ativo BOOLEAN NOT NULL,
+    status_pagamento VARCHAR(50) NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES paciente(id),
+    FOREIGN KEY (plano_id) REFERENCES planos(id)
 );
 
 -- Valores iniciais Roles

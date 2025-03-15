@@ -77,11 +77,13 @@ public class PacienteService {
 	}
 
 	public Paciente buscaPacienteLogin(String nome) {
-		return pacienteRepository.findByLogin(nome);
+		return pacienteRepository.findByLogin(nome)
+								 .orElseThrow(() -> new RuntimeException("Paciente nao encontrado..."));
 	}
 	
 	public Paciente buscaPacienteId(Long id) {
-		return pacienteRepository.findById(id).orElseThrow();
+		return pacienteRepository.findById(id)
+				 			     .orElseThrow(() -> new RuntimeException("Paciente nao encontrado..."));
 	}
 
 }

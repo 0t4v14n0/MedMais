@@ -149,6 +149,4 @@ public class Plano {
 		this.status = status;
 	}
     
-    
-    
 }

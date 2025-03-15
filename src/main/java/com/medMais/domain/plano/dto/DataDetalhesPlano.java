@@ -1,4 +1,4 @@
-package com.medMais.domain.plano;
+package com.medMais.domain.plano.dto;
 
 public record DataDetalhesPlano() {
 
