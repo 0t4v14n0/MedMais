@@ -1,8 +1,10 @@
 package com.medMais.domain.plano;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.medMais.domain.formasDePagamento.paypal.PaypalService;
 import com.medMais.domain.pessoa.paciente.PacienteService;
 import com.medMais.domain.plano.dto.DataAtualizarPlano;
 import com.medMais.domain.plano.dto.DataDetalhesAssinatura;
@@ -19,6 +21,8 @@ public class AssinaturaService {
     
     @Autowired
     private PacienteService paciente;
+    
+    private PaypalService paypalService;
 
     public DataDetalhesAssinatura trocarPlano(String pacienteName, DataAtualizarPlano novoPlano) {
     	
@@ -34,8 +38,25 @@ public class AssinaturaService {
         
         //fazer um retorno do paypal ou outra forma de pagamento
         
-        return new DataDetalhesAssinatura(assinatura);
+        String returnUrl = "https://minhaapi.com/paypal/confirmacao"; // URL de retorno após pagamento
+        String cancelUrl = "https://minhaapi.com/paypal/cancelado";  // URL caso o usuário cancele o pagamento
+        
+        String linkPagamento = paypalService.criarPedido(plano.getPreco(), "BRL", returnUrl, cancelUrl);
+
+        return new DataDetalhesAssinatura(assinatura, linkPagamento);
 
     }
+
+	public ResponseEntity<String> confirmarPagamento(boolean pago,String orderId) {
+		
+            Assinatura assinatura = assinaturaRepository.findByOrderId(orderId)
+                    .orElseThrow(() -> new RuntimeException("Assinatura não encontrada"));
+
+            assinatura.setStatusPagamento(StatusPagamento.PAGO);
+            assinaturaRepository.save(assinatura);
+
+            return ResponseEntity.ok("Pagamento confirmado!");     
+        
+	}
 
 }

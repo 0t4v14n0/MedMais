@@ -12,16 +12,18 @@ public record DataDetalhesAssinatura(Long id,
 									 LocalDate dataInicio,
 									 LocalDate dataExpiracao,
 									 boolean ativo,
-									 StatusPagamento statusPagamento) {
+									 StatusPagamento statusPagamento,
+									 String url) {
 
-	public DataDetalhesAssinatura(Assinatura assinatura) {
+	public DataDetalhesAssinatura(Assinatura assinatura, String link) {
 		this(assinatura.getId(),
 			 assinatura.getUsuario(),
 			 new DataDetalhesPlano(assinatura.getPlano()),
 			 assinatura.getDataInicio(),
 			 assinatura.getDataExpiracao(),
 			 assinatura.isAtivo(),
-			 assinatura.getStatusPagamento());
+			 assinatura.getStatusPagamento(),
+			 link);
 	}
 
 }

@@ -32,6 +32,8 @@ public class Assinatura {
     private LocalDate dataExpiracao;
 
     private boolean ativo;
+    
+    private String orderId;
 
     @Enumerated(EnumType.STRING)
     private StatusPagamento statusPagamento;
@@ -42,6 +44,14 @@ public class Assinatura {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
 
 	public Paciente getUsuario() {
