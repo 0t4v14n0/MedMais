@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,8 +32,8 @@ public class PlanoController {
 		return ResponseEntity.ok(planoService.criarPlano(data));
 	}
 	
-    @GetMapping
-    public ResponseEntity<DataDetalhesPlano> getPlano(TipoPlano plano) {
+    @GetMapping("/{id}")
+    public ResponseEntity<DataDetalhesPlano> getPlano(@PathVariable TipoPlano plano) {
 		return ResponseEntity.ok(planoService.getPlano(plano));
 	}
     

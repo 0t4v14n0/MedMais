@@ -34,9 +34,9 @@ public class AssinaturaService {
         
         //fazer um retorno do paypal ou outra forma de pagamento
         
-        String returnUrl = "https://minhaapi.com/paypal/confirmacao"; // URL de retorno após pagamento
-        String cancelUrl = "https://minhaapi.com/paypal/cancelado";  // URL caso o usuário cancele o pagamento
-        
+//        String returnUrl = "https://minhaapi.com/paypal/confirmacao"; // URL de retorno após pagamento
+//        String cancelUrl = "https://minhaapi.com/paypal/cancelado";  // URL caso o usuário cancele o pagamento
+//        
 
         return new DataDetalhesAssinatura(assinatura, null);
 
