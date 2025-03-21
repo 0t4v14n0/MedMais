@@ -1,6 +1,5 @@
 package com.medMais.domain.plano.dto;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.medMais.domain.pessoa.paciente.enums.TipoPlano;
@@ -16,8 +15,6 @@ public record DataDetalhesPlano(Long idPlanho,
 								List<String> beneficios,
 								List<String> limitacoes,
 								List<String> metodosPagamento,
-								LocalDate dataInicio,
-								LocalDate dataTermino,
 								StatusPlano status) {
 
 	public DataDetalhesPlano(Plano plano) {
@@ -30,8 +27,6 @@ public record DataDetalhesPlano(Long idPlanho,
 			 plano.getBeneficios(),
 			 plano.getLimitacoes(),
 			 plano.getMetodosPagamento(),
-			 plano.getDataInicio(),
-			 plano.getDataTermino(),
 			 plano.getStatus());
 	}
 }

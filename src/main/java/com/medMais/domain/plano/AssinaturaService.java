@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.medMais.domain.formasDePagamento.paypal.PaypalService;
 import com.medMais.domain.pessoa.paciente.PacienteService;
-import com.medMais.domain.plano.dto.DataAtualizarPlano;
 import com.medMais.domain.plano.dto.DataDetalhesAssinatura;
 import com.medMais.domain.plano.enums.StatusPagamento;
 
@@ -22,14 +21,15 @@ public class AssinaturaService {
     @Autowired
     private PacienteService paciente;
     
+    @Autowired
     private PaypalService paypalService;
 
-    public DataDetalhesAssinatura trocarPlano(String pacienteName, DataAtualizarPlano novoPlano) {
+    public DataDetalhesAssinatura trocarPlano(String pacienteName, String novoPlano) {
     	
         Assinatura assinatura = assinaturaRepository.findByUsuarioId(paciente.buscaPacienteLogin(pacienteName).getId())
                 									.orElseThrow(() -> new RuntimeException("Assinatura não encontrada"));
 
-        Plano plano = planoRepository.findByTipoPlano(novoPlano.novoPlano())
+        Plano plano = planoRepository.findByNome(novoPlano)
                 					 .orElseThrow(() -> new RuntimeException("Plano não encontrado"));
 
         assinatura.setPlano(plano);
@@ -47,7 +47,7 @@ public class AssinaturaService {
 
     }
 
-	public ResponseEntity<String> confirmarPagamento(boolean pago,String orderId) {
+	public ResponseEntity<String> confirmarPagamento(StatusPagamento pago,String orderId) {
 		
             Assinatura assinatura = assinaturaRepository.findByOrderId(orderId)
                     .orElseThrow(() -> new RuntimeException("Assinatura não encontrada"));

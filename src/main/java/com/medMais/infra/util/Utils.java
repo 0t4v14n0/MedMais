@@ -5,6 +5,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,14 @@ public class Utils {
     
     public boolean isNullOrEmptyDouble(Double d) {
     	return d == null || d <= 0.0;
+    }
+    
+    public boolean isNullOrEmptyInt(int d) {
+        return d <= 0;
+    }
+    
+    public boolean isNullOrEmptyList(List<String> beneficios) {
+        return beneficios == null || beneficios.isEmpty();
     }
     
     // DIA UIL E FERIADOS

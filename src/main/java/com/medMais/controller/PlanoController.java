@@ -28,7 +28,7 @@ public class PlanoController {
 	@Transactional
     @PostMapping("/criar")
     public ResponseEntity<DataDetalhesPlano> criar(@RequestBody @Valid DataRegisterPlano data) {
-		return ResponseEntity.ok(planoService.criarPlano());
+		return ResponseEntity.ok(planoService.criarPlano(data));
 	}
 	
     @GetMapping

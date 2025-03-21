@@ -98,13 +98,12 @@ CREATE TABLE historico_doenca (
 -- Tabela Plano
 CREATE TABLE planos (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
     tipo_plano VARCHAR(50) NOT NULL,
     preco DECIMAL(10,2) NOT NULL,
     desconto DECIMAL(10,2) NOT NULL,
     taxas_adicionais DECIMAL(10,2) NOT NULL,
     duracao INT,
-    data_inicio DATE,
-    data_termino DATE,
     status VARCHAR(50) NOT NULL
 );
 
@@ -134,6 +133,7 @@ CREATE TABLE assinatura (
     data_inicio DATE NOT NULL,
     data_expiracao DATE NOT NULL,
     ativo BOOLEAN NOT NULL,
+    orderId VARCHAR(100),
     status_pagamento VARCHAR(50) NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES paciente(id),
     FOREIGN KEY (plano_id) REFERENCES planos(id)

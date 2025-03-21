@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.medMais.domain.plano.AssinaturaService;
-import com.medMais.domain.plano.dto.DataAtualizarPlano;
 import com.medMais.domain.plano.dto.DataDetalhesAssinatura;
 
 import jakarta.transaction.Transactional;
@@ -24,8 +23,8 @@ public class AssinaturaController {
 	
 	@Transactional
     @PostMapping("/trocar-plano")
-    public ResponseEntity<DataDetalhesAssinatura> atualizar(@RequestBody @Valid DataAtualizarPlano data,
-																		   Authentication authentication) {		
+    public ResponseEntity<DataDetalhesAssinatura> atualizar(@RequestBody @Valid String data,
+																		   	 	Authentication authentication) {		
 		return ResponseEntity.ok(assinaturaService.trocarPlano(authentication.getName(), data));
 	}
 

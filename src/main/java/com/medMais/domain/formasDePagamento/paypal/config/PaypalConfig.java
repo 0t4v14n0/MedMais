@@ -12,16 +12,21 @@ public class PaypalConfig {
 	
 	@Value("${paypal.client-id}")
 	private String clientId;
-	
+
 	@Value("${paypal.client-secret}")
 	private String clientSecret;
-	
+
 	@Value("${paypal.client-mode}")
-	private String mode;
+	private String clientMode;
 	
     @Bean
     public PayPalHttpClient payPalHttpClient() {
-        PayPalEnvironment environment = "sandbox".equalsIgnoreCase(mode)
+    	
+    	if (clientId == null || clientSecret == null || clientMode == null) {
+    	    throw new IllegalStateException("Paypal configuration is incomplete");
+    	}
+    	
+        PayPalEnvironment environment = "sandbox".equalsIgnoreCase(clientMode)
                 ? new PayPalEnvironment.Sandbox(clientId, clientSecret)
                 : new PayPalEnvironment.Live(clientId, clientSecret);
 

@@ -14,7 +14,7 @@ import com.paypal.orders.*;
 @Service
 public class PaypalService {
 
-    @Autowired
+	@Autowired
     private PayPalHttpClient payPalHttpClient;
 
     public String criarPedido(Double valor, String moeda, String returnUrl, String cancelUrl) {

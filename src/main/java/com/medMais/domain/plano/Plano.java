@@ -1,9 +1,9 @@
 package com.medMais.domain.plano;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import com.medMais.domain.pessoa.paciente.enums.TipoPlano;
+import com.medMais.domain.plano.dto.DataRegisterPlano;
 import com.medMais.domain.plano.enums.StatusPlano;
 
 import jakarta.persistence.Column;
@@ -23,6 +23,8 @@ public class Plano {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+	
+	private String nome;
     
     @Enumerated(EnumType.STRING)
     private TipoPlano tipoPlano;
@@ -47,11 +49,23 @@ public class Plano {
     @ElementCollection
     private List<String> metodosPagamento;
     
-    private LocalDate dataInicio;
-    private LocalDate dataTermino;
-    
     @Enumerated(EnumType.STRING)
     private StatusPlano status;
+    
+    public Plano() {}
+    
+    public Plano(DataRegisterPlano data) {
+    	this.nome = data.nome();
+    	this.tipoPlano = data.tipo();
+    	this.preco = data.preco();
+    	this.desconto = data.desconto();
+    	this.taxasAdicionais = data.taxasAdicionais();
+    	this.duracao = data.duracao();
+    	this.beneficios = data.beneficios();
+    	this.limitacoes = data.limitacoes();
+    	this.metodosPagamento = data.metodosPagamento();
+    	this.status = data.status();
+    }
 
 	public Long getId() {
 		return id;
@@ -59,6 +73,14 @@ public class Plano {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
 	}
 
 	public TipoPlano getTipoPlano() {
@@ -123,22 +145,6 @@ public class Plano {
 
 	public void setMetodosPagamento(List<String> metodosPagamento) {
 		this.metodosPagamento = metodosPagamento;
-	}
-
-	public LocalDate getDataInicio() {
-		return dataInicio;
-	}
-
-	public void setDataInicio(LocalDate dataInicio) {
-		this.dataInicio = dataInicio;
-	}
-
-	public LocalDate getDataTermino() {
-		return dataTermino;
-	}
-
-	public void setDataTermino(LocalDate dataTermino) {
-		this.dataTermino = dataTermino;
 	}
 
 	public StatusPlano getStatus() {
