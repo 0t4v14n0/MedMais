@@ -36,7 +36,7 @@ public class PlanoController {
 		return ResponseEntity.ok(planoService.getPlano(plano));
 	}
     
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<DataDetalhesPlano>> getAllPlano() {	
 		return ResponseEntity.ok(planoService.getAllPlano());
 	}

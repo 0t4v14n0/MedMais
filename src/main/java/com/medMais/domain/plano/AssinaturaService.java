@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.medMais.domain.formasDePagamento.paypal.PaypalService;
 import com.medMais.domain.pessoa.paciente.PacienteService;
 import com.medMais.domain.plano.dto.DataDetalhesAssinatura;
 import com.medMais.domain.plano.enums.StatusPagamento;
@@ -20,9 +19,6 @@ public class AssinaturaService {
     
     @Autowired
     private PacienteService paciente;
-    
-    @Autowired
-    private PaypalService paypalService;
 
     public DataDetalhesAssinatura trocarPlano(String pacienteName, String novoPlano) {
     	
@@ -41,9 +37,8 @@ public class AssinaturaService {
         String returnUrl = "https://minhaapi.com/paypal/confirmacao"; // URL de retorno após pagamento
         String cancelUrl = "https://minhaapi.com/paypal/cancelado";  // URL caso o usuário cancele o pagamento
         
-        String linkPagamento = paypalService.criarPedido(plano.getPreco(), "BRL", returnUrl, cancelUrl);
 
-        return new DataDetalhesAssinatura(assinatura, linkPagamento);
+        return new DataDetalhesAssinatura(assinatura, null);
 
     }
 
