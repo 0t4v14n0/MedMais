@@ -73,5 +73,10 @@ public class PlanoService {
 	                 .map(DataDetalhesPlano::new)
 	                 .collect(Collectors.toList());
 	}
+	
+	public Plano buscaPlanoId(Long id) {
+		return planoRepository.findById(id)
+			     			  .orElseThrow(() -> new RuntimeException("Plano nao encontrado..."));
+	}
 
 }

@@ -11,8 +11,11 @@ public class Credentials {
     private String clientId;
 
     private String clientSecret;
+    
     private String certificate;
+    
     private boolean sandbox;
+    
     private boolean debug;
 
     public Credentials() {

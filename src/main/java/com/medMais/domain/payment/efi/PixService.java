@@ -1,31 +1,40 @@
 package com.medMais.domain.payment.efi;
 
-import java.awt.Desktop;
+import br.com.efi.efisdk.EfiPay;
+import br.com.efi.efisdk.exceptions.EfiPayException;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import com.medMais.controller.dto.PixChargeRequest;
+import com.medMais.domain.pessoa.paciente.Paciente;
+import com.medMais.domain.pessoa.paciente.PacienteService;
+import com.medMais.domain.plano.Plano;
+import com.medMais.domain.plano.PlanoService;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import com.medMais.controller.dto.PixChargeRequest;
-
-import br.com.efi.efisdk.EfiPay;
-import br.com.efi.efisdk.exceptions.EfiPayException;
-
 @Service
 public class PixService {
 
-    @Value("${CLIENT_ID}")
+    @Value("${CLIENT_ID_EFI}")
     private String clientId;
 
-    @Value("${CLIENT_SECRET}")
+    @Value("${CLIENT_SECRET_EFI}")
     private String clientSecret;
+    
+    @Autowired
+    private PacienteService pacienteService;
+    
+    @Autowired
+    private PlanoService planoService;
     
     public JSONObject pixCreateEVP(){
 
@@ -59,15 +68,15 @@ public class PixService {
         return options;
     }
 
-    public JSONObject pixCreateCharge(PixChargeRequest pixChargeRequest){
+    public JSONObject pixCreateCharge(JSONObject pixChaveRequest,Paciente paciente, Plano plano){
 
         JSONObject options = configuringJsonObject();
 
         JSONObject body = new JSONObject();
         body.put("calendario", new JSONObject().put("expiracao", 3600));
-        body.put("devedor", new JSONObject().put("cpf", "12345678909").put("nome", "Francisco da Silva"));
-        body.put("valor", new JSONObject().put("original", pixChargeRequest.valor()));
-        body.put("chave", pixChargeRequest.chave());
+        body.put("devedor", new JSONObject().put("cpf", paciente.getCpf()).put("nome", paciente.getNome()));
+        body.put("valor", new JSONObject().put("original", plano.getPreco()));
+        body.put("chave", pixChaveRequest);
 
         JSONArray infoAdicionais = new JSONArray();
         infoAdicionais.put(new JSONObject().put("nome", "Campo 1").put("valor", "Informação Adicional1 do PSP-Recebedor"));
@@ -75,15 +84,15 @@ public class PixService {
         body.put("infoAdicionais", infoAdicionais);
 
         try {
+        	
             EfiPay efi = new EfiPay(options);
             JSONObject response = efi.call("pixCreateImmediateCharge", new HashMap<String,String>(), body);
-
+            
             int idFromJson= response.getJSONObject("loc").getInt("id");
             pixGenerateQRCode(String.valueOf(idFromJson));
 
-
-
             return response;
+            
         }catch (EfiPayException e){
             System.out.println(e.getError());
             System.out.println(e.getErrorDescription());
@@ -123,4 +132,15 @@ public class PixService {
 
     }
 
+	public JSONObject pixCreateCharge(PixChargeRequest pixChargeRequest, String name) {
+		
+		JSONObject criacaoEVP = pixCreateEVP();
+		
+		Paciente paciente = pacienteService.buscaPacienteLogin(name);
+		
+		Plano plano = planoService.buscaPlanoId(pixChargeRequest.id());
+				
+		return pixCreateCharge(criacaoEVP,paciente,plano);
+		
+	}
 }
