@@ -18,6 +18,18 @@ import jakarta.persistence.EntityNotFoundException;
 @ControllerAdvice
 public class ErrorHandler {
 	
+    @SuppressWarnings("serial")
+	public static class EmailNotConfirmedException extends RuntimeException {
+        public EmailNotConfirmedException(String message) {
+            super(message);
+        }
+    }
+
+    @ExceptionHandler(EmailNotConfirmedException.class)
+    public ResponseEntity<String> tratarEmailNaoConfirmado(EmailNotConfirmedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
+    }
+	
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
