@@ -44,7 +44,7 @@ public class PacienteService {
 								 data.dataRegistroPessoa().cpf(),
 								 null);//paciente nao tem crm
 		
-		Role role = roleService.findByNameRole("ADMIN");
+		Role role = roleService.findByNameRole("PACIENTE");
 		var pessoa = new Paciente(data, role);
 		pessoa.setSenha(passwordUtil.encrypt(data.dataRegistroPessoa().senha()));
 		

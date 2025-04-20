@@ -25,6 +25,8 @@ public class Medico extends Pessoa {
     
     @Enumerated(EnumType.STRING)
     private EspecialidadeMedica especialidade;
+    
+    public Medico() {}
             
     public Medico(DataRegistroMedico data, Role role) {
         super(data.dataRegistroPessoa().login(),
