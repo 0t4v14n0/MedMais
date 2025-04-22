@@ -6,10 +6,12 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.medico.agenda.enums.StatusAgenda;
 
+@Repository
 public interface AgendaRepository extends JpaRepository<AgendaMedico, Long>{
 
 	boolean existsByMedicoAndHorario(Medico medico, LocalDateTime horario);

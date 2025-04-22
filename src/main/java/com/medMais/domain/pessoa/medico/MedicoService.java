@@ -55,7 +55,9 @@ public class MedicoService {
 		Role role = roleService.findByNameRole("MEDICO");
 		var pessoa = new Medico(data, role);
 		pessoa.setSenha(passwordUtil.encrypt(data.dataRegistroPessoa().senha()));
-		medicoRepository.save(pessoa);
+		
+		pessoa.gerarTokenConfirmacao();
+		
 		var uri = uriBuilder.path("").buildAndExpand(pessoa.getId()).toUri();
 		
 		try {
@@ -63,6 +65,8 @@ public class MedicoService {
 		} catch (UnsupportedEncodingException | MessagingException e) {
 			e.printStackTrace();
 		}
+		
+		medicoRepository.save(pessoa);
 		
 		return ResponseEntity.created(uri).body(new DataDetalhesMedico(pessoa));
 	}
@@ -90,7 +94,7 @@ public class MedicoService {
 
 	public ResponseEntity<Page<DataDetalhesMedico>> findAll(Pageable pageable) {
 		
-	    Page<Medico> medicos = medicoRepository.findAll(pageable);
+	    Page<Medico> medicos = medicoRepository.findAllWithEmailConfirmedPageable(pageable);
 	    
         Page<DataDetalhesMedico> detalhesMedicos = medicos.map(DataDetalhesMedico::new);
 
@@ -99,18 +103,18 @@ public class MedicoService {
 	
 	public List<Medico> findAllMedicos() {
 		
-	    List<Medico> medicos = medicoRepository.findAll();
-	    
+	    List<Medico> medicos = medicoRepository.findAllWithEmailConfirmed();
+	    	    
         return medicos;
 	}
 
 	public ResponseEntity<Page<DataDetalhesMedico>> getMedicosByEspecialidade(EspecialidadeMedica especialidade,
 																			  Pageable pageable) {
 		
-		Page<Medico> medicos = medicoRepository.findAllByEspecialidade(especialidade,pageable);
+		Page<Medico> medicos = medicoRepository.findByEspecialidadeAndEmailConfirmadoTrue(especialidade,pageable);
 		
 		Page<DataDetalhesMedico> detalhesMedicos = medicos.map(DataDetalhesMedico::new);
-
+		
         return ResponseEntity.ok(detalhesMedicos);
 	}
 

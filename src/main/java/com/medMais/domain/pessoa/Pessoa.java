@@ -18,6 +18,7 @@ import com.medMais.domain.pessoa.enums.Sexo;
 import com.medMais.domain.role.Role;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -59,7 +60,9 @@ public abstract class Pessoa implements UserDetails {
     
     private BigDecimal saldo;
     
+    @Column(name = "email_confirmado")
     private boolean emailConfirmado = false;
+    
     private String tokenConfirmacao;
     
     @OneToOne(cascade = CascadeType.ALL)

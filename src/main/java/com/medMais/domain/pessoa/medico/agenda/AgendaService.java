@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +19,11 @@ import com.medMais.domain.pessoa.medico.agenda.utils.CalcFeriados;
 public class AgendaService {
 	
 	@Autowired
-	MedicoService medicoService;
+	@Lazy
+	private MedicoService medicoService;
 	
 	@Autowired
-	AgendaRepository agendaRepository;
+	private AgendaRepository agendaRepository;
 
 	// garante 1 hora de antecedencia
 	public List<AgendaMedico> listaHorariosDisponiveisPorMedico(Long medicoId) {
@@ -40,9 +42,10 @@ public class AgendaService {
 	    }
 	}
 	
+	//pega o dia que for ativado o email...
 	public void gerarAgendaMensalNovoMedico(Medico medico) {
 		
-	    LocalDate primeiroDia = LocalDate.now().withDayOfMonth(1);
+	    LocalDate primeiroDia = LocalDate.now();
 	    LocalDate ultimoDia = primeiroDia.withDayOfMonth(primeiroDia.lengthOfMonth());
 
 	    gerarHorariosDisponiveisParaPeriodo(medico, primeiroDia, ultimoDia); 
@@ -75,6 +78,5 @@ public class AgendaService {
 	        }
 	    }
 	}
-
 
 }

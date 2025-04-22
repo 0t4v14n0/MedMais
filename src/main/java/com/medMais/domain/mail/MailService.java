@@ -1,7 +1,6 @@
 package com.medMais.domain.mail;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +32,7 @@ public class MailService {
     private MedicoRepository medicoRepository;
 
     // sem @Autowired para nao ter Dependências Circulares
+    @Autowired
     private AgendaService agendaService;
 	
     @Value("${app.verify.url}")
@@ -446,6 +446,8 @@ public class MailService {
         content = content.replace("[[URL]]", verifyURL);
 
         helper.setText(content, true);
+        
+        pessoaRepository.save(pessoa);
 
         javaMailSender.send(message);	
 		
@@ -462,12 +464,16 @@ public class MailService {
         // confirma o email do usuario 
         pessoa.setEmailConfirmado(true);
         pessoa.setTokenConfirmacao(null);// 0 o token 
-        pessoaRepository.save(pessoa);
         
         //cria AgendaMedico para Medico
-        Optional<Medico> medicoOpt = medicoRepository.findById(pessoa.getId());
-        medicoOpt.ifPresent(medico -> agendaService.gerarAgendaMensalNovoMedico(medico));
-
+        Medico medico = medicoRepository.findById(pessoa.getId()).get();
+        if(medico != null) {
+        	agendaService.gerarAgendaMensalNovoMedico(medico);
+        }
+        
+        medicoRepository.save(medico);
+        pessoaRepository.save(pessoa);
+                
         return ResponseEntity.ok("E-mail confirmado com sucesso!");
     }
 
