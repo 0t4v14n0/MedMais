@@ -96,6 +96,13 @@ public class MedicoService {
 
         return ResponseEntity.ok(detalhesMedicos);
 	}
+	
+	public List<Medico> findAllMedicos() {
+		
+	    List<Medico> medicos = medicoRepository.findAll();
+	    
+        return medicos;
+	}
 
 	public ResponseEntity<Page<DataDetalhesMedico>> getMedicosByEspecialidade(EspecialidadeMedica especialidade,
 																			  Pageable pageable) {

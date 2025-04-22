@@ -180,8 +180,8 @@ public class ConsultaService {
 		
 		return ResponseEntity.ok(new DataDetalhesConsulta(consulta));
 	}
-	
-	//metodos
+
+	//
 	
 	private Consulta buscaConsultaID(Long id) {
 		Consulta consulta = consultaRepository.findById(id)

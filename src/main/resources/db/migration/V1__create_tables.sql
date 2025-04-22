@@ -55,6 +55,16 @@ CREATE TABLE medicos (
     CONSTRAINT fk_medico_pessoa FOREIGN KEY (id) REFERENCES pessoa(id)
 );
 
+CREATE TABLE agenda_medico (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    medico_id BIGINT NOT NULL,
+    horario DATETIME NOT NULL,
+    disponivel VARCHAR(50),
+    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_agenda_medico FOREIGN KEY (medico_id) REFERENCES medicos(id)
+);
+
 CREATE TABLE paciente (
     id BIGINT PRIMARY KEY,
     tipo_sanguineo VARCHAR(10),
