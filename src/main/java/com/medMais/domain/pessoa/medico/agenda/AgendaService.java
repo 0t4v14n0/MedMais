@@ -7,11 +7,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.medico.MedicoService;
+import com.medMais.domain.pessoa.medico.agenda.dto.DataDetalhesAgenda;
 import com.medMais.domain.pessoa.medico.agenda.enums.StatusAgenda;
 import com.medMais.domain.pessoa.medico.agenda.utils.CalcFeriados;
 
@@ -24,21 +26,40 @@ public class AgendaService {
 	
 	@Autowired
 	private AgendaRepository agendaRepository;
+	
+	
+	public ResponseEntity<List<DataDetalhesAgenda>> listaAgendaMedicoDisponivel(Long crm){
+		
+		List<AgendaMedico> lista = listaHorariosDisponiveisPorMedico(crm);
+		
+		if(lista == null) {
+			throw new IllegalArgumentException("Sem agenda disponivel.");
+		}
+		
+	    List<DataDetalhesAgenda> listaDTO = lista.stream()
+	            .map(DataDetalhesAgenda::new)
+	            .toList();
+
+	    return ResponseEntity.ok(listaDTO);
+	}
 
 	// garante 1 hora de antecedencia
-	public List<AgendaMedico> listaHorariosDisponiveisPorMedico(Long medicoId) {
+	public List<AgendaMedico> listaHorariosDisponiveisPorMedico(Long medicoCrm) {
 	    LocalDateTime umaHoraDepois = LocalDateTime.now().plusHours(1);
-	    return agendaRepository.findDisponivelPorMedico(StatusAgenda.DISPONIVEL,medicoId, umaHoraDepois);
+	    return agendaRepository.findDisponivelPorMedico(StatusAgenda.DISPONIVEL,medicoCrm, umaHoraDepois);
 	}
 	
 	@Scheduled(cron = "0 0 2 1 * ?") // Todo dia 1 do mes as 02:00
 	public void gerarAgendaMensal() {
-	    List<Medico> medicos = medicoService.findAllMedicos();
+		
+	    List<Medico> medicos = medicoService.findAllMedicos();	    
+	    
 	    LocalDate primeiroDia = LocalDate.now().withDayOfMonth(1);
 	    LocalDate ultimoDia = primeiroDia.withDayOfMonth(primeiroDia.lengthOfMonth());
 
 	    for (Medico medico : medicos) {
-	        gerarHorariosDisponiveisParaPeriodo(medico, primeiroDia, ultimoDia);
+	    	arquivarListaDeHorariosPassado(medico.getId());//pega a lista antiga e coloca como ARQUIVADO
+	        gerarHorariosDisponiveisParaPeriodo(medico, primeiroDia, ultimoDia); //Gera uma nova lista de agenda
 	    }
 	}
 	
@@ -77,6 +98,15 @@ public class AgendaService {
 	            }
 	        }
 	    }
+	}
+	
+	public void arquivarListaDeHorariosPassado(Long id) {
+		
+	    List<AgendaMedico> lista = listaHorariosDisponiveisPorMedico(id);
+
+	    lista.forEach(agenda -> agenda.setDisponivel(StatusAgenda.ARQUIVADO));
+
+	    agendaRepository.saveAll(lista);
 	}
 
 }

@@ -34,7 +34,8 @@ public class AgendaMedico {
 
     private LocalDateTime criadoEm = LocalDateTime.now();
     
-
+	public AgendaMedico() {}
+    
 	public AgendaMedico(Medico medico, LocalDateTime horario) {
 		this.medico = medico;
 		this.horario = horario;

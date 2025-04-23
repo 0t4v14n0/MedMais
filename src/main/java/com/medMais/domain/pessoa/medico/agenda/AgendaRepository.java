@@ -18,14 +18,14 @@ public interface AgendaRepository extends JpaRepository<AgendaMedico, Long>{
 	
 	@Query("""
 		    SELECT a FROM AgendaMedico a
-		    WHERE a.medico.id = :medicoId
+		    WHERE a.medico.crm = :medicoCrm
 		      AND a.disponivel = :disponivel
 		      AND a.horario > :dataHora
 		    ORDER BY a.horario ASC
 		""")
 		List<AgendaMedico> findDisponivelPorMedico(
 		    @Param("disponivel") StatusAgenda disponivel,
-		    @Param("medicoId")   Long medicoId,
+		    @Param("medicoCrm")   Long medicoCrm,
 		    @Param("dataHora")   LocalDateTime dataHora
 		);
 	

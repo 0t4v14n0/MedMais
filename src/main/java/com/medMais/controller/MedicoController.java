@@ -1,7 +1,5 @@
 package com.medMais.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +21,6 @@ import com.medMais.domain.consulta.dto.ObsMedicoDTO;
 import com.medMais.domain.consulta.enums.StatusConsulta;
 import com.medMais.domain.pessoa.medico.EspecialidadeMedica;
 import com.medMais.domain.pessoa.medico.MedicoService;
-import com.medMais.domain.pessoa.medico.agenda.AgendaMedico;
 import com.medMais.domain.pessoa.medico.agenda.AgendaService;
 import com.medMais.domain.pessoa.medico.dto.DataAtualizarMedico;
 
@@ -86,10 +83,9 @@ public class MedicoController {
     }
     
     //lista com horarios disponiveis MEDICO
-	@GetMapping("/{id}/horarioDisponivel")
-	public ResponseEntity<List<AgendaMedico>> listaAgendaMedicoDisponivel(@PathVariable Long id) {
-	    List<AgendaMedico> lista = agendaService.listaHorariosDisponiveisPorMedico(id);
-	    return ResponseEntity.ok(lista);
+	@GetMapping("/{crm}/horarioDisponivel")
+	public ResponseEntity<?> listaAgendaMedicoDisponivel(@PathVariable Long crm) {
+	    return ResponseEntity.ok(agendaService.listaAgendaMedicoDisponivel(crm));
 	}
     
 }
