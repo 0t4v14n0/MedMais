@@ -16,7 +16,7 @@ import com.medMais.domain.consulta.enums.StatusConsulta;
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 	
 	@Query("SELECT c FROM Consulta c WHERE c.medico.id = :medicoId AND c.data = :dataHora")
-	Optional<Consulta> findByMedicoAndDataHora(@Param("medicoId") Long medicoId, @Param("dataHora") LocalDateTime dataHora);
+	Optional<Consulta> findByMedicoAndDataHora(@Param("medicoId") Long id, @Param("dataHora") LocalDateTime dataHora);
 
 	@Query("SELECT c FROM Consulta c " +
 		       "JOIN c.medico m " +

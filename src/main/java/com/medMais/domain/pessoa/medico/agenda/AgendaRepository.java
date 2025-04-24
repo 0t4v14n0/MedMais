@@ -28,5 +28,24 @@ public interface AgendaRepository extends JpaRepository<AgendaMedico, Long>{
 		    @Param("medicoCrm")   Long medicoCrm,
 		    @Param("dataHora")   LocalDateTime dataHora
 		);
+
+	@Query("""
+		    SELECT CASE WHEN COUNT(a) > 0 THEN true ELSE false END
+		    FROM AgendaMedico a
+		    WHERE a.horario = :horarioConsulta
+		      AND a.medico.crm = :crm
+		      AND a.disponivel = 'DISPONIVEL'
+		""")
+		boolean existsHorarioDisponivelPorMedico(@Param("horarioConsulta") LocalDateTime horarioConsulta,
+		                                         @Param("crm") String string);
+
+	@Query("""
+		    SELECT a FROM AgendaMedico a
+		    WHERE a.id = :id
+		      AND a.medico.crm = :crm
+		      AND a.disponivel = 'DISPONIVEL'
+		""")
+		AgendaMedico getAgendaMedicoHorarioDisponivel(@Param("id")  Long id,
+		                                              @Param("crm") String crm);
 	
 }

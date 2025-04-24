@@ -25,6 +25,8 @@ import com.medMais.domain.historicotransacoes.HistoricoTransacoesRepository;
 import com.medMais.domain.historicotransacoes.enums.StatusTransacao;
 import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.medico.MedicoService;
+import com.medMais.domain.pessoa.medico.agenda.AgendaMedico;
+import com.medMais.domain.pessoa.medico.agenda.AgendaService;
 import com.medMais.domain.pessoa.paciente.Paciente;
 import com.medMais.domain.pessoa.paciente.PacienteService;
 
@@ -40,6 +42,9 @@ public class ConsultaService {
 	private MedicoService medicoService;
 	
 	@Autowired
+	private AgendaService agendaService;
+	
+	@Autowired
 	private ConsultaRepository consultaRepository;
 	
 	@Autowired
@@ -48,12 +53,10 @@ public class ConsultaService {
 	//Agendar Consulta
 	
 	public ResponseEntity<DataDetalhesConsulta> agendarConsulta (DataRegistroConsulta dataRegistroConsulta, String login) {
-		
-		validacaoData(dataRegistroConsulta.horarioConsulta(),dataRegistroConsulta.id());
-		
+				
 		Paciente paciente = pacienteService.buscaPacienteLogin(login);
 		
-		Medico medico = medicoService.buscaMedicoID(dataRegistroConsulta.id());
+		Medico medico = medicoService.buscaMedicoCRM(dataRegistroConsulta.crm());
 		
 		BigDecimal saldoPaciente = paciente.getSaldo();
 		BigDecimal valorConsulta = medico.getValorConsulta();
@@ -63,6 +66,8 @@ public class ConsultaService {
 		if (saldoPaciente.compareTo(valorConsulta) < 0) {
 		    throw new IllegalArgumentException("Não tem saldo suficiente...");
 		}
+		
+		AgendaMedico agenda = agendaService.reservaHorario(dataRegistroConsulta.id(),dataRegistroConsulta.crm());
 		
 		HistoricoTransacoes h = new HistoricoTransacoes();
 		h.setMedico(medico);
@@ -81,7 +86,7 @@ public class ConsultaService {
 		consulta.setValorConsulta(medico.getValorConsulta());
 		consulta.setCriadoEm(LocalDateTime.now());
 		consulta.setAtualizadoEm(LocalDateTime.now());
-		consulta.setData(dataRegistroConsulta.horarioConsulta());
+		consulta.setData(agenda.getHorario());
 		
 		historicoTransacoesRepository.save(h);
 		consultaRepository.save(consulta);

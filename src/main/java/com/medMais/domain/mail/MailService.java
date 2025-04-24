@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.medMais.domain.pessoa.Pessoa;
 import com.medMais.domain.pessoa.PessoaRepository;
-import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.medico.MedicoRepository;
 import com.medMais.domain.pessoa.medico.agenda.AgendaService;
 
@@ -31,7 +30,6 @@ public class MailService {
     @Autowired
     private MedicoRepository medicoRepository;
 
-    // sem @Autowired para nao ter Dependências Circulares
     @Autowired
     private AgendaService agendaService;
 	
@@ -466,12 +464,12 @@ public class MailService {
         pessoa.setTokenConfirmacao(null);// 0 o token 
         
         //cria AgendaMedico para Medico
-        Medico medico = medicoRepository.findById(pessoa.getId()).get();
-        if(medico != null) {
-        	agendaService.gerarAgendaMensalNovoMedico(medico);
-        }
-        
-        medicoRepository.save(medico);
+        medicoRepository.findById(pessoa.getId())
+        .ifPresent(medico -> {
+            agendaService.gerarAgendaMensalNovoMedico(medico);
+            medicoRepository.save(medico);
+        });
+     
         pessoaRepository.save(pessoa);
                 
         return ResponseEntity.ok("E-mail confirmado com sucesso!");

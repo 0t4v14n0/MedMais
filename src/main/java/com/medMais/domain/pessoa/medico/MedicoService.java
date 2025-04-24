@@ -83,9 +83,12 @@ public class MedicoService {
 		return ResponseEntity.ok(new DataDetalhesMedico(medico));
 	}
 	
-	public Medico buscaMedicoID(Long id) {
-		return medicoRepository.findById(id)
-                			   .orElseThrow(() -> new RuntimeException("Médico não encontrado."));
+	public Medico buscaMedicoCRM(String crm) {
+		Medico m = (Medico) medicoRepository.findByCrm(crm);
+		if(m == null) {
+			
+		}
+		return m;
 	}
 
 	public Medico buscaMedicoLogin(String name) {

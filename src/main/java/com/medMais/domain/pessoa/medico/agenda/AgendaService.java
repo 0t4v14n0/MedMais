@@ -109,4 +109,13 @@ public class AgendaService {
 	    agendaRepository.saveAll(lista);
 	}
 
+	public AgendaMedico reservaHorario(Long id , String crm) {
+		
+		AgendaMedico agenda = agendaRepository.getAgendaMedicoHorarioDisponivel(id,crm);
+		agenda.setDisponivel(StatusAgenda.OCUPADO);
+		agendaRepository.save(agenda);
+		
+		return agenda;
+	}
+
 }

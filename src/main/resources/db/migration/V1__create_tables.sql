@@ -76,6 +76,21 @@ CREATE TABLE paciente (
     CONSTRAINT fk_paciente_pessoa FOREIGN KEY (id) REFERENCES pessoa(id)
 );
 
+CREATE TABLE consulta (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    paciente_id BIGINT NOT NULL,
+    medico_id BIGINT NOT NULL,    
+    valor_consulta DECIMAL(10,2),
+    status_consulta VARCHAR(50),
+    data DATETIME,
+    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    observacoes TEXT,
+    
+    CONSTRAINT fk_consulta_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id),
+    CONSTRAINT fk_consulta_medico FOREIGN KEY (medico_id) REFERENCES medicos(id)
+);
+
 CREATE TABLE historico_transacoes (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     paciente_id BIGINT NOT NULL,
@@ -84,8 +99,8 @@ CREATE TABLE historico_transacoes (
     valor DOUBLE,
     remetente BIGINT,
     data_transacao DATETIME,
-    CONSTRAINT fk_transacao_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id),
-    CONSTRAINT fk_transacao_medico FOREIGN KEY (medico_id) REFERENCES medicos(id)
+    CONSTRAINT fk_hist_trans_paciente FOREIGN KEY (paciente_id) REFERENCES paciente(id),
+    CONSTRAINT fk_hist_trans_medico FOREIGN KEY (medico_id) REFERENCES medicos(id)
 );
 
 CREATE TABLE historico_doenca (
