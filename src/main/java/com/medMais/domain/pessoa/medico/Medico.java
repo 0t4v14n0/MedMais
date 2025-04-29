@@ -72,5 +72,13 @@ public class Medico extends Pessoa {
 	public void setEspecialidade(EspecialidadeMedica especialidade) {
 		this.especialidade = especialidade;
 	}
+	
+	public void creditarSaldo(BigDecimal valorConsulta) {
+		Medico.super.setSaldo(Medico.super.getSaldo().add(valorConsulta));
+	}
+	
+	public void debitarSaldo(BigDecimal valorConsulta) {
+		Medico.super.setSaldo(Medico.super.getSaldo().subtract(valorConsulta));
+	}
 
 }

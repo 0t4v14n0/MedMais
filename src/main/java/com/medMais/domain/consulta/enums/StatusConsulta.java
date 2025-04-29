@@ -5,6 +5,7 @@ public enum StatusConsulta {
 	TODAS,
 	ABERTA,
 	FECHADA,
-	CANCELADA,
+	CANCELADA, 
+	NAO_COMPARECIDA,
 
 }

@@ -43,4 +43,6 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 		       "JOIN c.paciente p " +
 		       "WHERE m.login = :login OR p.login = :login")
 	List<StatusConsulta> findStatusByPessoaLogin(@Param("login") String login);
+
+	List<Consulta> findAllByStatusConsulta(StatusConsulta aberta);
 }

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,6 +32,7 @@ import com.medMais.domain.pessoa.medico.agenda.AgendaService;
 import com.medMais.domain.pessoa.paciente.Paciente;
 import com.medMais.domain.pessoa.paciente.PacienteService;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
 @Service
@@ -163,8 +165,14 @@ public class ConsultaService {
 	}
 
 	public ResponseEntity<Page<DataDetalhesConsulta>> buscaConsultas(StatusConsulta status, String login, Pageable pageable) {
-	    
-		Page<Consulta> consultas = consultaRepository.findByStatusAndLogin(status, login, pageable);
+		
+	    Page<Consulta> consultas;
+
+	    if (status == StatusConsulta.TODAS) {
+	        consultas = consultaRepository.findAll(pageable);
+	    } else {
+	        consultas = consultaRepository.findByStatusAndLogin(status, login, pageable);
+	    }
 	    
 	    Page<DataDetalhesConsulta> dtoPage = consultas.map(DataDetalhesConsulta::new);
 
@@ -214,6 +222,31 @@ public class ConsultaService {
             throw new RuntimeException("Horário já ocupado para o médico.");
         }
 		
+	}
+	
+	@Scheduled(cron = "0 0 2 * * ?") // Todo dia as 2h da manha
+	@Transactional
+	public void atualizarStatusConsultasAbertas() {
+	    List<Consulta> consultasAbertas = consultaRepository.findAllByStatusConsulta(StatusConsulta.ABERTA);
+	    LocalDateTime agora = LocalDateTime.now();
+
+	    for (Consulta consulta : consultasAbertas) {
+	        if (consulta.getData().isBefore(agora)) {
+	            // Atualizar o status
+	            consulta.setStatusConsulta(StatusConsulta.NAO_COMPARECIDA);
+	            System.out.println("aquui");
+
+	            // Devolver creditos
+	            Paciente paciente = consulta.getPaciente();
+	            paciente.creditarSaldo(consulta.getValorConsulta());
+
+	            // Retirar credito
+	            Medico medico = consulta.getMedico();
+	            medico.debitarSaldo(consulta.getValorConsulta());
+	        }
+	    }
+
+	    consultaRepository.saveAll(consultasAbertas);
 	}
 
 }

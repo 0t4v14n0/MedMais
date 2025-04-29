@@ -114,4 +114,12 @@ public class Paciente extends Pessoa{
 		this.tipoPlano = tipoPlano;
 	}
 
+	public void creditarSaldo(BigDecimal valorConsulta) {
+		Paciente.super.setSaldo(Paciente.super.getSaldo().add(valorConsulta));
+	}
+	
+	public void debitarSaldo(BigDecimal valorConsulta) {
+	    Paciente.super.setSaldo(Paciente.super.getSaldo().subtract(valorConsulta));
+	}
+
 }
