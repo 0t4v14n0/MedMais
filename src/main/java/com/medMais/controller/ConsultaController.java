@@ -1,5 +1,7 @@
 package com.medMais.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +51,11 @@ public class ConsultaController {
     public ResponseEntity<?> cancelarConsulta(@PathVariable Long id,
 		       												Authentication authentication) {
         return ResponseEntity.ok(consultaService.cancelarConsulta(id, authentication.getName()));        
+    }
+    
+    @GetMapping("/status")
+	public ResponseEntity<List<StatusConsulta>> buscaPorStatus(Authentication authentication){
+    	return ResponseEntity.ok(consultaService.buscaStatusConsultas(authentication.getName()));
     }
     
     @GetMapping("/{status}")

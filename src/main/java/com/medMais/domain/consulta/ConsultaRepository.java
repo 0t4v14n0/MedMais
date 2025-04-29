@@ -1,6 +1,7 @@
 package com.medMais.domain.consulta;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -20,18 +21,26 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
 	@Query("SELECT c FROM Consulta c " +
 		       "JOIN c.medico m " +
+		       "JOIN c.paciente p " +
 		       "WHERE c.statusConsulta = :status " +
-		       "AND m.login = :login")
-		Page<Consulta> findByStatusAndMedicoLogin(@Param("status") StatusConsulta status, 
-		                                         @Param("login") String login, 
-		                                         Pageable pageable);
+		       "AND (m.login = :login OR p.login = :login)")
+	Page<Consulta> findByStatusAndLogin(@Param("status") StatusConsulta status, 
+		                                @Param("login") String login, 
+		                                Pageable pageable);
 
 
 	@Query("SELECT c FROM Consulta c " +
-       "JOIN c.paciente p " +
-       "JOIN c.medico m " +
-       "WHERE c.id = :idConsulta " +
-       "AND (p.nome = :nome OR m.nome = :nome)")
+		   "JOIN c.paciente p " +
+		   "JOIN c.medico m " +
+		   "WHERE c.id = :idConsulta " +
+		   "AND (p.nome = :nome OR m.nome = :nome)")
 	Optional<Consulta> findByIdAndNomePacienteOrMedico(@Param("idConsulta") Long idConsulta, 
                                                    	   @Param("nome") String nome);
+
+	
+	@Query("SELECT DISTINCT c.statusConsulta FROM Consulta c " +
+		       "JOIN c.medico m " +
+		       "JOIN c.paciente p " +
+		       "WHERE m.login = :login OR p.login = :login")
+	List<StatusConsulta> findStatusByPessoaLogin(@Param("login") String login);
 }

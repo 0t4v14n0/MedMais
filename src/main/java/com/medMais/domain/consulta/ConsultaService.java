@@ -3,6 +3,7 @@ package com.medMais.domain.consulta;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -162,7 +163,8 @@ public class ConsultaService {
 	}
 
 	public ResponseEntity<Page<DataDetalhesConsulta>> buscaConsultas(StatusConsulta status, String login, Pageable pageable) {
-	    Page<Consulta> consultas = consultaRepository.findByStatusAndMedicoLogin(status, login, pageable);
+	    
+		Page<Consulta> consultas = consultaRepository.findByStatusAndLogin(status, login, pageable);
 	    
 	    Page<DataDetalhesConsulta> dtoPage = consultas.map(DataDetalhesConsulta::new);
 
@@ -184,6 +186,10 @@ public class ConsultaService {
 		consulta.setObservacoes(obs.obsPublica());
 		
 		return ResponseEntity.ok(new DataDetalhesConsulta(consulta));
+	}
+	
+	public List<StatusConsulta> buscaStatusConsultas(String login) {
+		return consultaRepository.findStatusByPessoaLogin(login);
 	}
 
 	//
