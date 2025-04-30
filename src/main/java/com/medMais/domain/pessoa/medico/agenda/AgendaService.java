@@ -72,6 +72,11 @@ public class AgendaService {
 	    gerarHorariosDisponiveisParaPeriodo(medico, primeiroDia, ultimoDia); 
 	}
 	
+	public AgendaMedico agendaMedicaPorData(LocalDateTime data) {
+		AgendaMedico agenda = agendaRepository.findByHorario(data);
+		return agenda;
+	}
+	
 	public void gerarHorariosDisponiveisParaPeriodo(Medico medico, LocalDate inicio, LocalDate fim) {
 		
 	    List<LocalDate> feriados = CalcFeriados.obterFeriadosNacionais(inicio.getYear());
@@ -116,6 +121,15 @@ public class AgendaService {
 		agendaRepository.save(agenda);
 		
 		return agenda;
+	}
+
+	//muda Statuus
+	public void mudarStatusAgenda(LocalDateTime data, StatusAgenda status) {
+		AgendaMedico agenda = agendaMedicaPorData(data);
+		agenda.setDisponivel(status);
+		
+		agendaRepository.save(agenda);
+		
 	}
 
 }

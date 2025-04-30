@@ -47,5 +47,7 @@ public interface AgendaRepository extends JpaRepository<AgendaMedico, Long>{
 		""")
 		AgendaMedico getAgendaMedicoHorarioDisponivel(@Param("id")  Long id,
 		                                              @Param("crm") String crm);
+
+	AgendaMedico findByHorario(LocalDateTime data);
 	
 }

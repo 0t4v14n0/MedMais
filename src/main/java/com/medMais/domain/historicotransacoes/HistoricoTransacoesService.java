@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.medMais.domain.historicotransacoes.dto.DataDetalhesHistoricoTransacoes;
 import com.medMais.domain.historicotransacoes.enums.StatusTransacao;
+import com.medMais.domain.pessoa.medico.Medico;
+import com.medMais.domain.pessoa.paciente.Paciente;
 
 @Service
 public class HistoricoTransacoesService {
@@ -27,6 +29,26 @@ public class HistoricoTransacoesService {
 		Page<DataDetalhesHistoricoTransacoes> dto = historico.map(DataDetalhesHistoricoTransacoes::new);
 		
 		return ResponseEntity.ok(dto);
+	}
+	
+	//metodo para na orepetir codigo
+	public void addHistorico(Medico medico,Paciente paciente, String name,StatusTransacao status) {
+		
+		HistoricoTransacoes h = new HistoricoTransacoes();
+		h.setMedico(medico);
+		h.setPaciente(paciente);
+		
+		if (medico.getLogin().equals(name)) {
+			h.setRemetente(medico.getId());
+		}else{
+			h.setRemetente(paciente.getId());
+
+		}
+		
+		h.setStatus(status);
+		
+		historicoTransacoesRepository.save(h);
+		
 	}
 
 }

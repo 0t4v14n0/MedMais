@@ -33,9 +33,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 		   "JOIN c.paciente p " +
 		   "JOIN c.medico m " +
 		   "WHERE c.id = :idConsulta " +
-		   "AND (p.nome = :nome OR m.nome = :nome)")
+		   "AND (p.login = :login OR m.login = :login)")
 	Optional<Consulta> findByIdAndNomePacienteOrMedico(@Param("idConsulta") Long idConsulta, 
-                                                   	   @Param("nome") String nome);
+                                                   	   @Param("login") String login);
 
 	
 	@Query("SELECT DISTINCT c.statusConsulta FROM Consulta c " +

@@ -1,6 +1,5 @@
 package com.medMais.domain.consulta;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -22,13 +21,13 @@ import com.medMais.domain.consulta.dto.DataRegistroConsulta;
 import com.medMais.domain.consulta.dto.ObsMedicoDTO;
 import com.medMais.domain.consulta.enums.HorarioConsulta;
 import com.medMais.domain.consulta.enums.StatusConsulta;
-import com.medMais.domain.historicotransacoes.HistoricoTransacoes;
-import com.medMais.domain.historicotransacoes.HistoricoTransacoesRepository;
+import com.medMais.domain.historicotransacoes.HistoricoTransacoesService;
 import com.medMais.domain.historicotransacoes.enums.StatusTransacao;
 import com.medMais.domain.pessoa.medico.Medico;
 import com.medMais.domain.pessoa.medico.MedicoService;
 import com.medMais.domain.pessoa.medico.agenda.AgendaMedico;
 import com.medMais.domain.pessoa.medico.agenda.AgendaService;
+import com.medMais.domain.pessoa.medico.agenda.enums.StatusAgenda;
 import com.medMais.domain.pessoa.paciente.Paciente;
 import com.medMais.domain.pessoa.paciente.PacienteService;
 
@@ -48,10 +47,10 @@ public class ConsultaService {
 	private AgendaService agendaService;
 	
 	@Autowired
-	private ConsultaRepository consultaRepository;
+	private HistoricoTransacoesService historicoTransacoesService;
 	
 	@Autowired
-	private HistoricoTransacoesRepository historicoTransacoesRepository;
+	private ConsultaRepository consultaRepository;
 	
 	//Agendar Consulta
 	
@@ -60,26 +59,16 @@ public class ConsultaService {
 		Paciente paciente = pacienteService.buscaPacienteLogin(login);
 		
 		Medico medico = medicoService.buscaMedicoCRM(dataRegistroConsulta.crm());
-		
-		BigDecimal saldoPaciente = paciente.getSaldo();
-		BigDecimal valorConsulta = medico.getValorConsulta();
-		BigDecimal saldoMedico = medico.getSaldo();
 
 		// Verifica se o paciente tem saldo suficiente
-		if (saldoPaciente.compareTo(valorConsulta) < 0) {
+		if (paciente.getSaldo().compareTo(medico.getValorConsulta()) < 0) {
 		    throw new IllegalArgumentException("Não tem saldo suficiente...");
 		}
 		
 		AgendaMedico agenda = agendaService.reservaHorario(dataRegistroConsulta.id(),dataRegistroConsulta.crm());
 		
-		HistoricoTransacoes h = new HistoricoTransacoes();
-		h.setMedico(medico);
-		h.setPaciente(paciente);
-		h.setRemetente(paciente.getId());
-		h.setStatus(StatusTransacao.AGENDADO);
-		
-		paciente.setSaldo(saldoPaciente.subtract(valorConsulta));
-		medico.setSaldo(saldoMedico.add(valorConsulta));
+		paciente.debitarSaldo(medico.getValorConsulta());
+		medico.creditarSaldo(medico.getValorConsulta());
 		
 		Consulta consulta = new Consulta();
 		
@@ -91,8 +80,9 @@ public class ConsultaService {
 		consulta.setAtualizadoEm(LocalDateTime.now());
 		consulta.setData(agenda.getHorario());
 		
-		historicoTransacoesRepository.save(h);
 		consultaRepository.save(consulta);
+		
+		historicoTransacoesService.addHistorico(medico, paciente, login,StatusTransacao.AGENDADO);
 						
 		return ResponseEntity.ok(new DataDetalhesConsulta(consulta));
 	}
@@ -105,8 +95,11 @@ public class ConsultaService {
 				
 		Consulta consulta = consultaRepository.findById(dataAtualizarConsulta.idConsulta())
 			    .orElseThrow(() -> new IllegalArgumentException("Consulta não encontrada!"));
+				
+		agendaService.mudarStatusAgenda(consulta.getData(), StatusAgenda.DISPONIVEL);
+		AgendaMedico agenda = agendaService.reservaHorario(dataAtualizarConsulta.idHorario(),consulta.getMedico().getCrm());
 		
-		consulta.setData(dataAtualizarConsulta.novoHorarioConsulta());
+		consulta.setData(agenda.getHorario());
 		
 		consultaRepository.save(consulta);
 		
@@ -123,20 +116,20 @@ public class ConsultaService {
 	    if (consulta.getStatusConsulta() == StatusConsulta.CANCELADA || consulta.getStatusConsulta() == StatusConsulta.FECHADA) {
 	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Consulta já foi cancelada ou fechada anteriormente.");
 	    }
-	    
-		consulta.setStatusConsulta(StatusConsulta.CANCELADA);
-			
+	    			
 		Paciente paciente = consulta.getPaciente();		
 		Medico medico = consulta.getMedico();
 		
-		BigDecimal saldoPaciente = paciente.getSaldo();
-		BigDecimal valorConsulta = medico.getValorConsulta();
-		BigDecimal saldoMedico = medico.getSaldo();
+		agendaService.mudarStatusAgenda(consulta.getData(), StatusAgenda.DISPONIVEL);
 		
-		paciente.setSaldo(saldoPaciente.add(valorConsulta));
-		medico.setSaldo(saldoMedico.subtract(valorConsulta));
+		paciente.creditarSaldo(medico.getValorConsulta());
+		medico.debitarSaldo(medico.getValorConsulta());
+		
+		consulta.setStatusConsulta(StatusConsulta.CANCELADA);
 
 		consultaRepository.save(consulta);
+		
+		historicoTransacoesService.addHistorico(medico, paciente, name, StatusTransacao.CANCELADO);
 		
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("mensagem", "Consulta cancelada com sucesso!");

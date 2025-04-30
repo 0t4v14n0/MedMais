@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Sort;
 
 import com.medMais.domain.consulta.ConsultaService;
 import com.medMais.domain.consulta.dto.DataAtualizarConsulta;
@@ -47,7 +49,7 @@ public class ConsultaController {
     }
     
     @Transactional
-    @PutMapping("/cancelar/{id}")
+    @DeleteMapping("/cancelar/{id}")
     public ResponseEntity<?> cancelarConsulta(@PathVariable Long id,
 		       												Authentication authentication) {
         return ResponseEntity.ok(consultaService.cancelarConsulta(id, authentication.getName()));        
@@ -61,8 +63,9 @@ public class ConsultaController {
     @GetMapping("/{status}")
 	public ResponseEntity<Page<DataDetalhesConsulta>> buscaPorStatus(@PathVariable StatusConsulta status,
 																				   Authentication authentication,
-			   														 @PageableDefault(size = 10,
-			   														 				  sort = {"id"}) Pageable pageable){
+																				   @PageableDefault(size = 10,
+																				   					sort = "id",
+																				   					direction = Sort.Direction.DESC) Pageable pageable){
     	return consultaService.buscaConsultas(status, authentication.getName(), pageable);
     }
 
