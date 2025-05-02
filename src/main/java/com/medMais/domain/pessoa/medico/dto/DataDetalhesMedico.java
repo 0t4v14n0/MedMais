@@ -13,6 +13,7 @@ public record DataDetalhesMedico(DataDetalhesPessoa dataDetalhesPessoa,
 	
 	public DataDetalhesMedico(Medico medico){
 		this(new DataDetalhesPessoa(medico.getNome(),
+									medico.getSaldo(),
 									medico.getCpf(),
 									medico.getEmail(),
 									medico.getTelefone(),

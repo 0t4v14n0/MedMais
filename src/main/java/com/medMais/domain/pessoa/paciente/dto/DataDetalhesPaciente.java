@@ -16,6 +16,7 @@ public record DataDetalhesPaciente(DataDetalhesPessoa dataDetalhesPessoa,
 	
 	public DataDetalhesPaciente(Paciente paciente){
 		this(new DataDetalhesPessoa(paciente.getNome(),
+									paciente.getSaldo(),
 								    paciente.getCpf(),
 								    paciente.getEmail(),
 								    paciente.getTelefone(),

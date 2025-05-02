@@ -126,4 +126,9 @@ public class MedicoService {
         return ResponseEntity.ok(especialidades);
 	}
 
+	public DataDetalhesMedico buscaDadosPorUsuario(String username) {
+		Medico m = buscaMedicoLogin(username);
+		return new DataDetalhesMedico(m);
+	}
+
 }

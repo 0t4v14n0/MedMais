@@ -86,4 +86,11 @@ public class PacienteService {
 				 			     .orElseThrow(() -> new RuntimeException("Paciente nao encontrado..."));
 	}
 
+	public DataDetalhesPaciente buscaDadosPorUsuario(String username) {
+		
+		Paciente p = pacienteRepository.findByLogin(username)
+				 .orElseThrow(() -> new RuntimeException("Paciente nao encontrado..."));
+		return new DataDetalhesPaciente(p);
+	}
+
 }
