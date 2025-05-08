@@ -1,6 +1,7 @@
 package com.medMais.domain.pessoa;
 
 import java.math.BigDecimal;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ import jakarta.persistence.OneToOne;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Pessoa implements UserDetails {
-
+	
 	/**
 	 * 
 	 */

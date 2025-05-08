@@ -9,9 +9,8 @@ public record DataDetalhesPublicoPaciente(DataDetalhesPessoaPublico dataDetalhes
 		   								  TipoPlano plano) {
 
 		public DataDetalhesPublicoPaciente(Paciente paciente){
-			this(new DataDetalhesPessoaPublico(paciente.getNome(),
-											   paciente.getTelefone(),
-											   paciente.getEmail()),
+			this(new DataDetalhesPessoaPublico(paciente.getId(),
+											   paciente.getNome()),
 			paciente.getNumeroCarteiraPlano(),
 			paciente.getTipoPlano());
 		}

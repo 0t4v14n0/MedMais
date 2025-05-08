@@ -4,16 +4,16 @@ import java.time.LocalDateTime;
 
 import com.medMais.domain.historicotransacoes.HistoricoTransacoes;
 import com.medMais.domain.historicotransacoes.enums.StatusTransacao;
-import com.medMais.domain.pessoa.medico.dto.DataDetalhesMedico;
-import com.medMais.domain.pessoa.paciente.dto.DataDetalhesPaciente;
+import com.medMais.domain.pessoa.medico.dto.DataDetalhesPublicoMedico;
+import com.medMais.domain.pessoa.paciente.dto.DataDetalhesPublicoPaciente;
 
 public record DataDetalhesHistoricoTransacoes(Long id,
 											  Double valor,
 											  LocalDateTime dataTransacao,
 											  StatusTransacao status,
 											  Long remetente,
-											  DataDetalhesPaciente dataDetalhesPaciente,
-											  DataDetalhesMedico dataDetalhesMedico) {
+											  DataDetalhesPublicoPaciente dataDetalhesPaciente,
+											  DataDetalhesPublicoMedico dataDetalhesMedico) {
 
 	public DataDetalhesHistoricoTransacoes(HistoricoTransacoes data) {
 		this(data.getId(),
@@ -21,8 +21,8 @@ public record DataDetalhesHistoricoTransacoes(Long id,
 			 data.getDataTransacao(),
 			 data.getStatus(),
 			 data.getRemetente(),
-			 new DataDetalhesPaciente(data.getPaciente()),
-			 new DataDetalhesMedico(data.getMedico()));
+			 new DataDetalhesPublicoPaciente(data.getPaciente()),
+			 new DataDetalhesPublicoMedico(data.getMedico()));
 	}
 	
 }

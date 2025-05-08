@@ -1,8 +1,11 @@
 package com.medMais.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,10 +26,17 @@ public class HistoricoTransacoesController {
 	private HistoricoTransacoesService historicoTransacoesService;
 	
     @GetMapping("/{status}")
-	public ResponseEntity<Page<DataDetalhesHistoricoTransacoes>> buscaPorStatusH(@PathVariable StatusTransacao status,Authentication authentication,
-			   														 @PageableDefault(size = 10,
-			   														 				  sort = {"id"}) Pageable pageable){
+	public ResponseEntity<Page<DataDetalhesHistoricoTransacoes>> buscaPorStatusH(@PathVariable StatusTransacao status,
+																							   Authentication authentication,
+																							   @PageableDefault(size = 10,
+																							   					sort = "id",
+																							   					direction = Sort.Direction.DESC) Pageable pageable){
     	return historicoTransacoesService.buscaHistoricoStatus(status,authentication.getName(),pageable);
+    }
+    
+    @GetMapping("/status")
+	public ResponseEntity<List<StatusTransacao>> buscaStatusDisponivel(Authentication authentication){
+    	return ResponseEntity.ok(historicoTransacoesService.buscaHistoricoDisponivelStatus(authentication.getName()));
     }
 
 }

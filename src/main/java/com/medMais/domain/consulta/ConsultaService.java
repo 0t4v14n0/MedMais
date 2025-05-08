@@ -162,7 +162,7 @@ public class ConsultaService {
 	    Page<Consulta> consultas;
 
 	    if (status == StatusConsulta.TODAS) {
-	        consultas = consultaRepository.findAll(pageable);
+	        consultas = consultaRepository.findAllByLogin(login,pageable);
 	    } else {
 	        consultas = consultaRepository.findByStatusAndLogin(status, login, pageable);
 	    }

@@ -16,12 +16,16 @@ import com.medMais.domain.role.Role;
 import com.medMais.infra.exception.ErrorHandler;
 import com.medMais.infra.security.TokenDataJWT;
 import com.medMais.infra.security.TokenService;
+import com.medMais.infra.util.PasswordUtil;
 import com.medMais.infra.util.Utils;
 
 import jakarta.validation.Valid;
 
 @Service
 public class PessoaService {
+	
+	@Autowired
+	private PasswordUtil passwordUtil;
 	
     @Autowired
     private AuthenticationManager manager;
@@ -61,7 +65,7 @@ public class PessoaService {
 
 		//pessoa
 		if (!utils.isNullOrEmptyString(data.login())) pessoa.setLogin(data.login());		
-		if (!utils.isNullOrEmptyString(data.senha())) pessoa.setSenha(data.senha());		
+		if (!utils.isNullOrEmptyString(data.senha())) pessoa.setSenha(passwordUtil.encrypt(data.senha()));		
 		if (!utils.isNullOrEmptyString(data.nome())) pessoa.setNome(data.nome());		
 		if (!utils.isNullOrEmptyString(data.cpf())) pessoa.setCpf(data.cpf());		
 		if (!utils.isNullOrEmptyString(data.email())) pessoa.setEmail(data.email());		

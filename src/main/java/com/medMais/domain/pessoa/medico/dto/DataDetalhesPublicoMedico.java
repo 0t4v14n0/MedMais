@@ -9,10 +9,9 @@ public record DataDetalhesPublicoMedico(DataDetalhesPessoaPublico dataDetalhesPe
 		 							    EspecialidadeMedica especialidadeMedica) {
 
 	public DataDetalhesPublicoMedico(Medico medico){
-		this(new DataDetalhesPessoaPublico(medico.getNome(),
-				medico.getTelefone(),
-				medico.getEmail()),
-				medico.getCrm(),
-				medico.getEspecialidade());
+		this(new DataDetalhesPessoaPublico(medico.getId(),
+										   medico.getNome()),
+										   medico.getCrm(),
+										   medico.getEspecialidade());
 	}
 }

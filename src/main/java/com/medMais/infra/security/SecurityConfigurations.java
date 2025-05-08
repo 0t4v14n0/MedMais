@@ -41,6 +41,7 @@ public class SecurityConfigurations {
 	            req.requestMatchers("/paciente/register").permitAll();
 	            req.requestMatchers("/pessoa/login").permitAll();
 	            req.requestMatchers("/auth/**").permitAll();
+	            req.requestMatchers("/publico/**").permitAll();
 	            req.requestMatchers("/medico/especialidade").permitAll();
 	            req.requestMatchers("/medico/**").hasAnyAuthority("MEDICO", "PACIENTE");
 	            req.requestMatchers("/pessoa/atualizar", "/endereco/**", "/historicodoenca/**", "/consulta/**").hasAnyAuthority("ADMIN", "PACIENTE", "MEDICO");
