@@ -3,6 +3,7 @@ package com.medMais.domain.pessoa;
 import java.math.BigDecimal;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +52,9 @@ public abstract class Pessoa implements UserDetails {
     private String cpf;
     private String email;
     private String telefone;
+    
     private LocalDate dataNascimento;
+    private LocalDateTime dataValidacao;
     
     @Enumerated(EnumType.STRING)
     private Sexo sexo;  // MASCULINO, FEMININO, OUTRO
@@ -89,12 +92,26 @@ public abstract class Pessoa implements UserDetails {
 	    this.roles.add(roles);
     	this.nome = nome;
         this.cpf = cpf;
+        this.dataValidacao = LocalDateTime.now();
         this.email = email;
         this.telefone = telefone;
         this.dataNascimento = dataNascimento;
         this.endereco = new Endereco(dataRegistroEndereco, this);
         this.saldo = saldo;
     }
+    
+    public boolean isTokenValido() {
+        LocalDateTime prazoExpiracao = this.dataValidacao.plusHours(24);
+        return LocalDateTime.now().isBefore(prazoExpiracao);
+    }
+
+	public LocalDateTime getDataValidacao() {
+		return dataValidacao;
+	}
+
+	public void setDataValidacao(LocalDateTime dataCriacao) {
+		this.dataValidacao = dataCriacao;
+	}
 
 	public String getTokenConfirmacao() {
 		return tokenConfirmacao;

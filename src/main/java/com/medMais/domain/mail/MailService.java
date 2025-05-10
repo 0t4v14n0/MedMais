@@ -1,10 +1,10 @@
 package com.medMais.domain.mail;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -467,14 +467,11 @@ public class MailService {
 
     public ResponseEntity<String> confirmarEmail(String token) {
     	
-        Pessoa pessoa = pessoaRepository.findByTokenConfirmacao(token);
-        
-        if (pessoa == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Token inválido!");
-        }
+        Pessoa pessoa = validacao(token);
         
         // confirma o email do usuario 
         pessoa.setEmailConfirmado(true);
+        pessoa.setDataValidacao(null);
         pessoa.setTokenConfirmacao(null);// 0 o token 
         
         //cria AgendaMedico para Medico
@@ -493,6 +490,8 @@ public class MailService {
 		
 		Pessoa pessoa = pessoaRepository.findByEmailOrLoginWithConfirmedEmail(email)
 		    .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado ou email não confirmado"));
+		
+		pessoa.setDataValidacao(LocalDateTime.now());
 		
 	    pessoa.gerarTokenConfirmacao();
 	    pessoaRepository.save(pessoa);
@@ -795,11 +794,7 @@ public class MailService {
 
 	public void trocarSenha(String token, String senha) {
 		
-        Pessoa pessoa = pessoaRepository.findByTokenConfirmacao(token);
-
-        if (pessoa == null) {
-        	throw new IllegalArgumentException("Token invalido !");
-        }
+        Pessoa pessoa = validacao(token);
 
         pessoa.setTokenConfirmacao(null);// 0 o token
         
@@ -807,6 +802,21 @@ public class MailService {
         
         pessoaRepository.save(pessoa);
         
+	}
+	
+	private Pessoa validacao(String token) {
+		
+		Pessoa pessoa = pessoaRepository.findByTokenConfirmacao(token);
+		
+        if (pessoa == null) {
+        	throw new IllegalArgumentException("Token invalido !");
+        }
+        
+        if(pessoa.isTokenValido()) {
+        	throw new IllegalArgumentException("Token expirado !");
+        }
+		
+		return pessoa;
 	}
 
 }
